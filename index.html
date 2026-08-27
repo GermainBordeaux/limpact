@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L'Impact — L'info qui frappe juste.">
+  <title>L'Impact — L'info qui frappe juste.</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#accueil" aria-label="Accueil L'Impact">
+        <img src="assets/logo-impact.png" alt="L'Impact — L'info qui frappe juste">
+      </a>
+
+      <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+
+      <nav class="main-nav" aria-label="Navigation principale">
+        <a href="#accueil">Accueil</a>
+        <a href="#actualites">Actualités</a>
+        <a href="#shorts">Shorts</a>
+        <a href="#histoire">Histoire</a>
+        <a href="#automobile">Automobile</a>
+        <a href="#sport">Sport</a>
+        <a href="#tech">Tech</a>
+        <a href="#apropos">À propos</a>
+      </nav>
+
+      <button class="search-button" id="openSearch" aria-label="Rechercher">⌕</button>
+    </div>
+  </header>
+
+  <main id="accueil">
+    <section class="hero">
+      <div class="hero-content">
+        <span class="eyebrow">L'INFO QUI FRAPPE JUSTE.</span>
+        <h1>L'actualité,<br><span>sans détour.</span></h1>
+        <p>Des sujets qui comptent, des formats courts et des reportages pensés pour aller à l'essentiel.</p>
+        <a class="btn btn-primary" href="#actualites">Voir les vidéos</a>
+      </div>
+      <div class="hero-card">
+        <div class="live-badge"><span></span> À LA UNE</div>
+        <div class="hero-video-wrap">
+          <video id="heroVideo" controls playsinline preload="metadata" poster="assets/logo-impact.png"></video>
+        </div>
+        <div class="hero-card-body">
+          <div class="category">À LA UNE</div>
+          <h2 id="heroTitle">Chargement de la vidéo...</h2>
+          <p id="heroDescription"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ticker" aria-label="Dernières informations">
+      <div class="ticker-label">FLASH</div>
+      <div class="ticker-track" id="tickerTrack"></div>
+    </section>
+
+    <section class="section" id="actualites">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">NOS VIDÉOS</span>
+          <h2>L'actualité en vidéo</h2>
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter active" data-category="Tous">Tous</button>
+          <button class="filter" data-category="Actualités">Actualités</button>
+          <button class="filter" data-category="Histoire">Histoire</button>
+          <button class="filter" data-category="Automobile">Automobile</button>
+          <button class="filter" data-category="Sport">Sport</button>
+          <button class="filter" data-category="Tech">Tech</button>
+        </div>
+      </div>
+
+      <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+    <section class="split-section section" id="histoire">
+      <div class="split-text">
+        <span class="eyebrow">SÉRIE — HISTOIRE</span>
+        <h2>Comprendre le passé pour mieux lire le présent.</h2>
+        <p>Une série consacrée aux grandes histoires, aux marques, aux inventions et aux événements qui ont façonné notre monde.</p>
+        <a class="btn btn-secondary" href="#actualites" data-filter-link="Histoire">Explorer Histoire</a>
+      </div>
+      <div class="split-number">01</div>
+    </section>
+
+    <section class="split-section section reverse" id="automobile">
+      <div class="split-text">
+        <span class="eyebrow">SÉRIE — AUTOMOBILE</span>
+        <h2>Dans le rétro : l'histoire de l'automobile.</h2>
+        <p>L'histoire de l'automobile et des marques aujourd'hui mythiques, racontée à travers leurs origines, leurs modèles et les histoires qui ont construit leur légende.</p>
+        <a class="btn btn-secondary" href="#actualites" data-filter-link="Automobile">Découvrir Dans le rétro</a>
+      </div>
+      <div class="split-number">02</div>
+    </section>
+
+    <section class="section shorts-section" id="shorts">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">FORMAT VERTICAL</span>
+          <h2>Shorts</h2>
+        </div>
+        <a class="btn btn-secondary" href="#shorts">Voir tous les shorts</a>
+      </div>
+      <div class="shorts-track" id="shortsTrack"></div>
+      <div class="shorts-hint">← Glisser pour voir plus →</div>
+    </section>
+
+    <section class="section compact-section" id="sport">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">SPORT</span>
+          <h2>Le sport qui fait vibrer.</h2>
+        </div>
+      </div>
+      <div class="sport-banner">
+        <div>
+          <span class="sport-dot"></span>
+          <strong>IMPACT SPORT</strong>
+        </div>
+        <p>Retrouvez nos sujets sport dans la sélection vidéo.</p>
+        <a class="btn btn-primary" href="#actualites" data-filter-link="Sport">Voir les vidéos</a>
+      </div>
+    </section>
+
+    <section class="section compact-section" id="tech">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">TECH</span>
+          <h2>La technologie, expliquée simplement.</h2>
+        </div>
+      </div>
+      <div class="tech-grid">
+        <article><span>01</span><h3>Décryptage</h3><p>Comprendre les nouvelles technologies sans jargon.</p></article>
+        <article><span>02</span><h3>Internet</h3><p>Les services, plateformes et tendances qui changent nos usages.</p></article>
+        <article><span>03</span><h3>Innovations</h3><p>Les idées qui pourraient transformer demain.</p></article>
+      </div>
+    </section>
+
+    <section class="about section" id="apropos">
+      <span class="eyebrow">À PROPOS</span>
+      <h2>L'Impact</h2>
+      <p>L'Impact est un média vidéo indépendant imaginé pour raconter l'information avec un ton clair, direct et moderne.</p>
+      <div class="about-grid">
+        <div><strong>01</strong><span>Clair</span><p>Pas de détour inutile.</p></div>
+        <div><strong>02</strong><span>Direct</span><p>Des formats qui vont à l'essentiel.</p></div>
+        <div><strong>03</strong><span>Curieux</span><p>De l'actualité à l'histoire, en passant par l'auto et la tech.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <img src="assets/logo-impact.png" alt="L'Impact">
+      <p>© <span id="year"></span> L'Impact — L'info qui frappe juste.</p>
+      <div class="footer-links">
+        <a href="#apropos">À propos</a>
+        <a href="#accueil">Retour en haut ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-panel">
+      <button class="close-modal" id="closeSearch" aria-label="Fermer">×</button>
+      <span class="eyebrow">RECHERCHE</span>
+      <h2>Que cherchez-vous ?</h2>
+      <input id="searchInput" type="search" placeholder="Ex. Formule 1, histoire, technologie..." autocomplete="off">
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+
+  <div class="video-modal" id="videoModal" aria-hidden="true">
+    <div class="video-panel">
+      <button class="close-modal" id="closeVideo" aria-label="Fermer">×</button>
+      <video id="modalVideo" controls playsinline></video>
+      <div class="modal-info">
+        <span class="category" id="modalCategory"></span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="short-modal" id="shortModal">
+    <div class="short-panel">
+      <button class="close-modal" id="closeShort" aria-label="Fermer">×</button>
+      <iframe id="shortIframe" frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen referrerpolicy="unsafe-url"
+        style="width:100%; aspect-ratio:9/16; display:block; background:#000; max-height:75vh;">
+      </iframe>
+      <div class="modal-info">
+        <span class="category" id="shortCategory"></span>
+        <h2 id="shortTitle"></h2>
+        <p id="shortDate" style="color:#777; font-size:12px;"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
