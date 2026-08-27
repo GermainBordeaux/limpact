@@ -292,3 +292,130 @@ function init() {
 
 // ── DÉMARRAGE ─────────────────────────────────
 document.addEventListener("DOMContentLoaded", loadVideos);
+
+// ── GOOGLE DRIVE BROWSER ──────────────────────
+const DRIVE_ROOT   = "19zVl8f3BxJueVnXfVBRnoqrv6gTneYmQ";
+const DRIVE_KEY    = "AIzaSyA4_lJfNbkvFkuPIsko-CdqBukVsKaSXfg";
+const DRIVE_API    = "https://www.googleapis.com/drive/v3/files";
+
+function fileIcon(mime) {
+  if (mime === "application/vnd.google-apps.folder") return "📁";
+  if (mime.includes("video")) return "🎬";
+  if (mime.includes("pdf"))   return "📄";
+  if (mime.includes("text") || mime.includes("document")) return "📝";
+  if (mime.includes("image")) return "🖼️";
+  if (mime.includes("spreadsheet")) return "📊";
+  return "📎";
+}
+
+function formatSize(bytes) {
+  if (!bytes) return "";
+  if (bytes < 1024) return bytes + " o";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " Ko";
+  return (bytes / 1024 / 1024).toFixed(1) + " Mo";
+}
+
+async function driveList(folderId) {
+  const q   = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+  const url = `${DRIVE_API}?q=${q}&fields=files(id,name,mimeType,size,webViewLink,webContentLink)&orderBy=name&key=${DRIVE_KEY}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.files || [];
+}
+
+async function loadDrive() {
+  const browser = document.getElementById("driveBrowser");
+  if (!browser) return;
+  try {
+    browser.innerHTML = '<div class="drive-loading">Chargement des fichiers...</div>';
+    const items = await driveList(DRIVE_ROOT);
+
+    if (!items.length) {
+      browser.innerHTML = '<div class="drive-loading">Aucun fichier trouvé.</div>';
+      return;
+    }
+
+    const folders = items.filter(f => f.mimeType === "application/vnd.google-apps.folder");
+    const files   = items.filter(f => f.mimeType !== "application/vnd.google-apps.folder");
+
+    browser.innerHTML = "";
+
+    // Afficher les dossiers avec leur contenu
+    for (const folder of folders) {
+      const subItems = await driveList(folder.id);
+      const subFiles = subItems.filter(f => f.mimeType !== "application/vnd.google-apps.folder");
+
+      const el = document.createElement("div");
+      el.className = "drive-folder";
+      el.innerHTML = `
+        <div class="drive-folder-header">
+          <span class="drive-folder-icon">📁</span>
+          <span class="drive-folder-name">${folder.name}</span>
+          <span class="drive-folder-count">${subFiles.length} fichier${subFiles.length > 1 ? "s" : ""}</span>
+          <span class="drive-folder-arrow">▶</span>
+        </div>
+        <div class="drive-files">
+          ${subFiles.map(f => `
+            <a class="drive-file" href="${f.webViewLink}" target="_blank" rel="noopener">
+              <span class="drive-file-icon">${fileIcon(f.mimeType)}</span>
+              <span class="drive-file-name">${f.name}</span>
+              <span class="drive-file-size">${formatSize(parseInt(f.size))}</span>
+              <span class="drive-file-dl">Ouvrir ↗</span>
+            </a>
+          `).join("") || '<div class="drive-file"><span class="drive-file-name" style="color:#555">Dossier vide</span></div>'}
+        </div>
+      `;
+      el.querySelector(".drive-folder-header").addEventListener("click", () => {
+        el.classList.toggle("open");
+      });
+      browser.appendChild(el);
+    }
+
+    // Fichiers à la racine
+    if (files.length) {
+      const el = document.createElement("div");
+      el.className = "drive-folder open";
+      el.innerHTML = `
+        <div class="drive-folder-header">
+          <span class="drive-folder-icon">📂</span>
+          <span class="drive-folder-name">Fichiers racine</span>
+          <span class="drive-folder-count">${files.length} fichier${files.length > 1 ? "s" : ""}</span>
+          <span class="drive-folder-arrow">▶</span>
+        </div>
+        <div class="drive-files">
+          ${files.map(f => `
+            <a class="drive-file" href="${f.webViewLink}" target="_blank" rel="noopener">
+              <span class="drive-file-icon">${fileIcon(f.mimeType)}</span>
+              <span class="drive-file-name">${f.name}</span>
+              <span class="drive-file-size">${formatSize(parseInt(f.size))}</span>
+              <span class="drive-file-dl">Ouvrir ↗</span>
+            </a>
+          `).join("")}
+        </div>
+      `;
+      el.querySelector(".drive-folder-header").addEventListener("click", () => {
+        el.classList.toggle("open");
+      });
+      browser.appendChild(el);
+    }
+
+  } catch (err) {
+    console.error("Erreur Drive:", err);
+    browser.innerHTML = '<div class="drive-error">Impossible de charger les fichiers. Vérifiez que le dossier Drive est public.</div>';
+  }
+}
+
+// Charger le Drive quand la section est visible
+const driveObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      loadDrive();
+      driveObserver.disconnect();
+    }
+  });
+}, { threshold: 0.1 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sourcesSection = document.getElementById("sources");
+  if (sourcesSection) driveObserver.observe(sourcesSection);
+});
