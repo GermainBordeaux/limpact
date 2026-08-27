@@ -294,9 +294,47 @@ function init() {
 document.addEventListener("DOMContentLoaded", loadVideos);
 
 // ── GOOGLE DRIVE BROWSER ──────────────────────
-const DRIVE_ROOT   = "19zVl8f3BxJueVnXfVBRnoqrv6gTneYmQ";
-const DRIVE_KEY    = "AIzaSyA4_lJfNbkvFkuPIsko-CdqBukVsKaSXfg";
-const DRIVE_API    = "https://www.googleapis.com/drive/v3/files";
+function loadDrive() {
+  const browser = document.getElementById("driveBrowser");
+  if (!browser) return;
+  browser.innerHTML = `
+    <iframe
+      src="https://drive.google.com/embeddedfolderview?id=19zVl8f3BxJueVnXfVBRnoqrv6gTneYmQ#list"
+      style="width:100%; height:600px; border:1px solid #292929; background:#121212;"
+      allowfullscreen>
+    </iframe>
+  `;
+}
+
+// Charger le Drive quand la section est visible
+const driveObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      loadDrive();
+      driveObserver.disconnect();
+    }
+  });
+}, { threshold: 0.1 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sourcesSection = document.getElementById("sources");
+  if (sourcesSection) driveObserver.observe(sourcesSection);
+});
+
+// Charger le Drive quand la section est visible
+const driveObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      loadDrive();
+      driveObserver.disconnect();
+    }
+  });
+}, { threshold: 0.1 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sourcesSection = document.getElementById("sources");
+  if (sourcesSection) driveObserver.observe(sourcesSection);
+});
 
 function fileIcon(mime) {
   if (mime === "application/vnd.google-apps.folder") return "📁";
