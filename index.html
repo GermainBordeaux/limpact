@@ -1,1031 +1,244 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L'Impact — L'info qui frappe juste.</title>
-
-<!-- PWA -->
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#4cbe1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="L'Impact">
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
-
-<!-- SEO -->
-<meta name="description" content="L'info qui frappe juste. Émissions, extraits, shorts et coulisses du journal télévisé indépendant L'Impact.">
-<meta property="og:title" content="L'Impact — L'info qui frappe juste.">
-<meta property="og:description" content="Le journal télévisé indépendant.">
-<meta property="og:image" content="https://i.imgur.com/8pQtdwx.png">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0a0a0a; color: #fff; font-family: 'Arial Black', Arial, sans-serif; overflow-x: hidden; }
-
-/* ── NAV ─────────────────────────────────────── */
-nav {
-  background: #0a0a0a; border-bottom: 2px solid #4cbe1a;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 1.5rem; height: 64px; position: sticky; top: 0; z-index: 100;
-}
-.logo img { height: 44px; width: auto; display: block; cursor: pointer; }
-.hamburger {
-  background: none; border: none; cursor: pointer;
-  display: flex; flex-direction: column; gap: 5px; padding: 6px;
-}
-.hamburger span {
-  display: block; width: 26px; height: 2px; background: #fff; transition: all 0.3s;
-}
-.hamburger:hover span { background: #4cbe1a; }
-
-/* ── MENU LATÉRAL ────────────────────────────── */
-.side-overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300;
-}
-.side-overlay.open { display: block; }
-.side-menu {
-  position: fixed; top: 0; left: -320px; width: 300px; height: 100vh;
-  background: #111; border-right: 2px solid #4cbe1a;
-  z-index: 310; transition: left 0.3s ease; overflow-y: auto;
-  display: flex; flex-direction: column;
-}
-.side-menu.open { left: 0; }
-.side-menu-header {
-  padding: 20px; border-bottom: 1px solid #1a1a1a;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.side-menu-header img { height: 36px; }
-.side-close {
-  background: none; border: none; color: #555; font-size: 24px;
-  cursor: pointer; line-height: 1;
-}
-.side-close:hover { color: #4cbe1a; }
-.side-nav { padding: 12px 0; flex: 1; }
-.side-nav a {
-  display: flex; align-items: center; gap: 14px;
-  padding: 14px 20px; color: #aaa; text-decoration: none;
-  font-size: 13px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; cursor: pointer; transition: all 0.15s;
-  border-left: 3px solid transparent;
-}
-.side-nav a:hover, .side-nav a.active {
-  color: #fff; background: #1a1a1a; border-left-color: #4cbe1a;
-}
-.side-nav a .nav-icon { font-size: 18px; width: 24px; text-align: center; }
-.side-nav .nav-divider { height: 1px; background: #1a1a1a; margin: 8px 20px; }
-.side-footer-credits {
-  padding: 16px 20px; border-top: 1px solid #1a1a1a;
-  font-size: 10px; color: #444; font-family: Arial, sans-serif;
-  font-weight: 400; line-height: 1.6;
-}
-
-/* ── PAGES ────────────────────────────────────── */
-.page { display: none; }
-.page.active { display: block; }
-
-/* ── MODAL ────────────────────────────────────── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.92); z-index: 200;
-  align-items: center; justify-content: center; padding: 20px;
-}
-.modal-overlay.open { display: flex; }
-.modal-wrapper { display: flex; align-items: flex-start; max-width: 1100px; width: 100%; }
-.modal-box { background: #111; width: 100%; max-width: 720px; position: relative; flex: 1 1 auto; min-width: 0; }
-.modal-box.vertical { max-width: 380px; }
-.modal-close {
-  position: absolute; top: -40px; right: 0;
-  background: none; border: none; color: #fff;
-  font-size: 28px; cursor: pointer; font-weight: 900; line-height: 1;
-}
-.modal-close:hover { color: #4cbe1a; }
-.modal-credits-btn {
-  display: none; position: absolute; top: 10px; right: 10px; z-index: 10;
-  background: rgba(0,0,0,0.75); border: 1px solid #4cbe1a;
-  color: #4cbe1a; font-size: 10px; font-weight: 900;
-  letter-spacing: 2px; text-transform: uppercase;
-  padding: 6px 12px; cursor: pointer; transition: all 0.2s;
-}
-.modal-credits-btn:hover { background: #4cbe1a; color: #0a0a0a; }
-.modal-credits-panel {
-  display: none; width: 0; overflow: hidden;
-  background: #0d0d0d; border-left: 2px solid #4cbe1a;
-  transition: width 0.3s ease; flex-shrink: 0;
-}
-.modal-credits-panel.open { width: 280px; }
-.modal-credits-panel-inner { padding: 20px; width: 280px; }
-.panel-label {
-  color: #4cbe1a; font-size: 9px; font-weight: 900; letter-spacing: 3px;
-  text-transform: uppercase; margin-bottom: 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.panel-close { background: none; border: none; color: #555; font-size: 18px; cursor: pointer; }
-.panel-close:hover { color: #4cbe1a; }
-.modal-player { width: 100%; background: #000; overflow: hidden; }
-.modal-player.landscape { aspect-ratio: 16/9; max-height: calc(100vh - 180px); }
-.modal-player.portrait { aspect-ratio: 9/16; max-height: calc(100vh - 180px); width: auto; margin: 0 auto; }
-.modal-player iframe { width: 100%; height: 100%; border: none; display: block; }
-.modal-info { padding: 16px; }
-.modal-theme { color: #4cbe1a; font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-.modal-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 4px; line-height: 1.3; }
-.modal-date { color: #555; font-size: 12px; font-weight: 700; }
-.modal-credits-btn-mobile {
-  display: none; width: 100%; background: #0d0d0d; border: none;
-  border-top: 1px solid #222; color: #4cbe1a; font-size: 11px; font-weight: 900;
-  letter-spacing: 2px; text-transform: uppercase; padding: 12px; cursor: pointer; text-align: center;
-}
-/* Vue crédits mobile */
-.modal-credits-view {
-  display: none; position: fixed; inset: 0; z-index: 210;
-  background: #0a0a0a; overflow-y: auto; padding: 20px;
-}
-.modal-credits-view.open { display: block; }
-.credits-view-header {
-  display: flex; align-items: center; gap: 14px;
-  margin-bottom: 24px; padding-bottom: 14px; border-bottom: 2px solid #4cbe1a;
-}
-.credits-back-btn {
-  background: none; border: 1px solid #333; color: #aaa;
-  font-size: 18px; width: 36px; height: 36px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.credits-back-btn:hover { border-color: #4cbe1a; color: #4cbe1a; }
-.credits-view-theme { color: #4cbe1a; font-size: 9px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-.credits-view-title { font-size: 13px; font-weight: 900; color: #fff; line-height: 1.3; }
-.credits-view-grid { display: flex; flex-direction: column; gap: 20px; }
-.credits-view-row { padding-bottom: 20px; border-bottom: 1px solid #1a1a1a; }
-.credits-view-row:last-child { border-bottom: none; }
-.credits-view-role { font-size: 9px; font-weight: 900; color: #4cbe1a; letter-spacing: 3px; text-transform: uppercase; }
-.credits-view-name { font-size: 20px; font-weight: 900; color: #fff; }
-.credits-view-def { font-size: 12px; color: #555; font-family: Arial; font-style: italic; line-height: 1.5; margin-top: 2px; }
-.credits-grid { display: flex; flex-direction: column; gap: 8px; }
-.credit-row { display: flex; flex-direction: column; gap: 2px; }
-.credit-role { font-size: 9px; font-weight: 900; color: #4cbe1a; letter-spacing: 2px; text-transform: uppercase; }
-.credit-name { font-size: 13px; font-weight: 900; color: #fff; }
-.credit-def { font-size: 10px; color: #555; font-family: Arial; font-style: italic; line-height: 1.4; }
-
-/* ── SECTION HEADER ──────────────────────────── */
-.section-header { display: flex; align-items: center; gap: 14px; padding: 2.5rem 2rem 1.5rem; }
-.section-bar { width: 4px; height: 32px; background: #4cbe1a; flex-shrink: 0; }
-.section-title { font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 3px; }
-.section-count { background: #1a1a1a; color: #4cbe1a; font-size: 11px; font-weight: 900; padding: 3px 8px; letter-spacing: 1px; white-space: nowrap; }
-.section-desc { padding: 0 2rem 1.5rem; font-size: 13px; color: #555; font-family: Arial; line-height: 1.6; font-weight: 400; }
-
-/* ── HERO EMISSION ───────────────────────────── */
-.s1 { padding-bottom: 2.5rem; border-bottom: 1px solid #1a1a1a; }
-.hero-emission { margin: 0 2rem 1.5rem; cursor: pointer; }
-.hero-thumb {
-  width: 100%; aspect-ratio: 16/9;
-  background: linear-gradient(135deg, #111 0%, #1a2a11 50%, #0d1a0d 100%);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden; transition: opacity 0.2s;
-}
-.hero-thumb:hover { opacity: 0.85; }
-.play-btn { width: 70px; height: 70px; border-radius: 50%; background: #4cbe1a; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; z-index: 4; position: relative; }
-.hero-thumb:hover .play-btn { transform: scale(1.1); }
-.play-arrow { width: 0; height: 0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 26px solid #0a0a0a; margin-left: 5px; }
-.duration { position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.85); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 7px; z-index: 4; }
-.new-badge { position: absolute; top: 12px; left: 12px; background: #4cbe1a; color: #0a0a0a; font-size: 10px; font-weight: 900; padding: 3px 8px; letter-spacing: 2px; z-index: 4; }
-.hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 60%, transparent 100%); z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
-.hero-overlay-ep { color: #4cbe1a; font-size: 11px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-.hero-overlay-ttl { font-size: 20px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 4px; }
-.hero-overlay-sub { color: #aaa; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
-
-/* ── GRILLE ÉMISSIONS ────────────────────────── */
-.emissions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0 2rem; }
-.em-card { cursor: pointer; }
-.em-thumb { aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; transition: opacity 0.2s; }
-.em-thumb:hover { opacity: 0.8; }
-.em-thumb:hover .em-play { transform: scale(1.1); }
-.em-bg1 { position: absolute; inset: 0; background: linear-gradient(135deg, #111 0%, #1a1811 100%); }
-.em-bg2 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d0d1a 0%, #111 100%); }
-.em-bg3 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0d0d 0%, #111 100%); }
-.em-bg4 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d1a1a 0%, #111 100%); }
-.em-play { width: 40px; height: 40px; border-radius: 50%; background: rgba(76,190,26,0.85); display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s; }
-.sm-arrow { width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 15px solid #0a0a0a; margin-left: 3px; }
-.em-dur { position: absolute; bottom: 7px; right: 7px; z-index: 4; background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 5px; }
-.em-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%); z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; }
-.em-overlay-ep { color: #4cbe1a; font-size: 9px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-.em-overlay-ttl { font-size: 13px; font-weight: 900; color: #fff; line-height: 1.2; }
-
-/* ── EXTRAITS ─────────────────────────────────── */
-.s2 { padding-bottom: 2.5rem; border-bottom: 1px solid #1a1a1a; }
-.themes-tabs { display: flex; padding: 0 2rem 1.5rem; overflow-x: auto; }
-.tab { padding: 8px 18px; font-size: 11px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: 1px solid #222; color: #666; background: transparent; white-space: nowrap; border-right: none; transition: all 0.15s; }
-.tab:last-child { border-right: 1px solid #222; }
-.tab.active { background: #4cbe1a; color: #0a0a0a; border-color: #4cbe1a; }
-.tab:hover:not(.active) { color: #4cbe1a; border-color: #333; }
-.theme-section { padding: 0 2rem 1.5rem; }
-.theme-label { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
-.theme-dot { width: 8px; height: 8px; background: #4cbe1a; flex-shrink: 0; }
-.theme-name { font-size: 13px; font-weight: 900; color: #4cbe1a; letter-spacing: 3px; text-transform: uppercase; }
-.extraits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.ex-card { cursor: pointer; }
-.ex-thumb { aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; transition: opacity 0.2s; }
-.ex-thumb:hover { opacity: 0.8; }
-.ex-thumb:hover .ex-play { transform: scale(1.1); }
-.ex-bg1 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d1a1a 0%, #111 100%); }
-.ex-bg2 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0d0d 0%, #111 100%); }
-.ex-bg3 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d0d1a 0%, #111 100%); }
-.ex-bg4 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a1a0d 0%, #111 100%); }
-.ex-bg5 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d1a0d 0%, #111 100%); }
-.ex-bg6 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0d1a 0%, #111 100%); }
-.ex-play { width: 34px; height: 34px; border-radius: 50%; background: rgba(76,190,26,0.9); display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s; }
-.xs-arrow { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 13px solid #0a0a0a; margin-left: 3px; }
-.ex-dur { position: absolute; bottom: 6px; right: 6px; z-index: 4; background: rgba(0,0,0,0.85); color: #fff; font-size: 9px; font-weight: 700; padding: 2px 4px; }
-.ex-badge { position: absolute; top: 6px; left: 6px; z-index: 4; font-size: 9px; font-weight: 900; padding: 2px 6px; letter-spacing: 1px; text-transform: uppercase; }
-.badge-pol { background: #1a3a8a; color: #88aaff; }
-.badge-soc { background: #3a1a8a; color: #bb88ff; }
-.badge-eco { background: #1a5a1a; color: #88cc88; }
-.badge-int { background: #8a3a1a; color: #ffaa88; }
-.badge-cul { background: #5a1a3a; color: #ff88bb; }
-.badge-spt { background: #1a5a5a; color: #88dddd; }
-.ex-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 55%, transparent 100%); z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; padding: 7px; }
-.ex-overlay-ttl { font-size: 11px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 2px; }
-.ex-overlay-date { color: #aaa; font-size: 9px; font-weight: 700; }
-
-/* ── SHORTS ───────────────────────────────────── */
-.s3 { padding-bottom: 3rem; }
-.shorts-wrap { padding: 0 2rem; }
-.shorts-carousel { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-.shorts-carousel::-webkit-scrollbar { height: 3px; }
-.shorts-carousel::-webkit-scrollbar-thumb { background: #4cbe1a; }
-.short-card { flex-shrink: 0; width: 130px; cursor: pointer; scroll-snap-align: start; }
-.short-thumb { width: 130px; height: 231px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; border-radius: 4px; transition: opacity 0.2s; }
-.short-thumb:hover { opacity: 0.8; }
-.short-thumb:hover .sh-play { transform: scale(1.1); }
-.sh-bg1 { position: absolute; inset: 0; background: linear-gradient(180deg, #0d1a0d 0%, #111 60%, #1a1a0d 100%); }
-.sh-bg2 { position: absolute; inset: 0; background: linear-gradient(180deg, #1a0d0d 0%, #111 60%, #0d0d1a 100%); }
-.sh-bg3 { position: absolute; inset: 0; background: linear-gradient(180deg, #0d0d1a 0%, #111 60%, #1a0d0d 100%); }
-.sh-bg4 { position: absolute; inset: 0; background: linear-gradient(180deg, #1a1a0d 0%, #111 60%, #0d1a1a 100%); }
-.sh-bg5 { position: absolute; inset: 0; background: linear-gradient(180deg, #1a0d1a 0%, #111 60%, #0d0d1a 100%); }
-.sh-bg6 { position: absolute; inset: 0; background: linear-gradient(180deg, #0d1a1a 0%, #111 60%, #1a0d0d 100%); }
-.sh-play { width: 44px; height: 44px; border-radius: 50%; background: rgba(76,190,26,0.9); display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s; }
-.sh-arrow { width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 17px solid #0a0a0a; margin-left: 4px; }
-.sh-dur { position: absolute; bottom: 8px; right: 8px; z-index: 4; background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 5px; }
-.sh-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; }
-.sh-overlay-ttl { font-size: 10px; font-weight: 900; color: #fff; line-height: 1.25; margin-bottom: 2px; }
-.sh-overlay-date { color: #aaa; font-size: 9px; font-weight: 700; }
-.swipe-hint { display: flex; align-items: center; gap: 8px; padding: 10px 0 0; color: #444; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
-.swipe-arrows { color: #4cbe1a; }
-
-/* ── COULISSES ────────────────────────────────── */
-.coulisses-hero { padding: 3rem 2rem 2rem; background: linear-gradient(180deg, #0d1a0d 0%, #0a0a0a 100%); border-bottom: 1px solid #1a1a1a; text-align: center; }
-.coulisses-hero .tag { display: inline-block; background: #4cbe1a; color: #0a0a0a; font-size: 10px; font-weight: 900; padding: 4px 12px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem; }
-.coulisses-hero h1 { font-size: 36px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 0.75rem; }
-.coulisses-hero p { font-size: 14px; color: #666; font-family: Arial; font-weight: 400; max-width: 500px; margin: 0 auto; line-height: 1.6; }
-.coulisses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 2.5rem 2rem 3rem; }
-.co-card { cursor: pointer; }
-.co-thumb { aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; transition: opacity 0.2s; }
-.co-thumb:hover { opacity: 0.8; }
-.co-thumb:hover .co-play { transform: scale(1.1); }
-.co-bg1 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d1a0d 0%, #111 100%); }
-.co-bg2 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0d1a 0%, #111 100%); }
-.co-bg3 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a1a0d 0%, #111 100%); }
-.co-bg4 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d0d1a 0%, #111 100%); }
-.co-bg5 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0d0d 0%, #111 100%); }
-.co-bg6 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d1a1a 0%, #111 100%); }
-.co-play { width: 44px; height: 44px; border-radius: 50%; background: rgba(76,190,26,0.9); display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s; }
-.co-arrow { width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 17px solid #0a0a0a; margin-left: 4px; }
-.co-dur { position: absolute; bottom: 8px; right: 8px; z-index: 4; background: rgba(0,0,0,0.85); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 5px; }
-.co-badge { position: absolute; top: 8px; left: 8px; z-index: 4; font-size: 9px; font-weight: 900; padding: 3px 7px; letter-spacing: 1px; text-transform: uppercase; }
-.badge-interview { background: #4cbe1a; color: #0a0a0a; }
-.badge-tournage  { background: #2a2a2a; color: #aaa; border: 1px solid #444; }
-.badge-secret    { background: #1a1a3a; color: #88aaff; }
-.co-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 55%, transparent 100%); z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; }
-.co-overlay-ttl { font-size: 13px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 4px; }
-.co-overlay-sub { font-size: 10px; color: #aaa; font-family: Arial; font-weight: 400; }
-
-/* ── PAGE GÉNÉRIQUE (séries, projets) ─────────── */
-.page-hero {
-  padding: 3rem 2rem 2rem;
-  border-bottom: 1px solid #1a1a1a; text-align: center;
-}
-.page-hero .tag { display: inline-block; background: #4cbe1a; color: #0a0a0a; font-size: 10px; font-weight: 900; padding: 4px 12px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1rem; }
-.page-hero h1 { font-size: 32px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 0.75rem; }
-.page-hero p { font-size: 13px; color: #666; font-family: Arial; font-weight: 400; max-width: 500px; margin: 0 auto; line-height: 1.6; }
-
-/* Grille épisodes série */
-.series-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 2.5rem 2rem 3rem; }
-
-/* ── PAGE PROJETS (vitrine 2 colonnes) ────────── */
-.projets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 2.5rem 2rem 3rem; }
-.projet-card { background: #111; cursor: default; position: relative; overflow: hidden; }
-.projet-thumb { aspect-ratio: 16/9; background: linear-gradient(135deg, #1a1a0d 0%, #111 100%); position: relative; overflow: hidden; display: flex; align-items: flex-start; padding: 10px; }
-.projet-date { background: rgba(0,0,0,0.75); color: #4cbe1a; font-size: 10px; font-weight: 900; padding: 3px 8px; letter-spacing: 1px; z-index: 2; position: relative; }
-.projet-bg1 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a1a0d 0%, #111 100%); }
-.projet-bg2 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d1a1a 0%, #111 100%); }
-.projet-bg3 { position: absolute; inset: 0; background: linear-gradient(135deg, #1a0d1a 0%, #111 100%); }
-.projet-bg4 { position: absolute; inset: 0; background: linear-gradient(135deg, #0d0d1a 0%, #111 100%); }
-.projet-info { padding: 12px; }
-.projet-titre { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 6px; line-height: 1.3; }
-.projet-desc { font-size: 11px; color: #555; font-family: Arial; font-weight: 400; line-height: 1.5; }
-
-/* ── PAGE DÉDIÉE (shorts/extraits/émissions full) */
-.page-full-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 2rem; }
-.page-full-shorts { display: flex; flex-wrap: wrap; gap: 16px; padding: 2rem; }
-
-/* ── FOOTER ───────────────────────────────────── */
-footer {
-  background: #050505; border-top: 2px solid #4cbe1a;
-  padding: 1.5rem 2rem; text-align: center;
-}
-.footer-logo { margin-bottom: 10px; }
-.footer-logo img { height: 36px; width: auto; }
-.footer-tag { color: #444; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-.footer-credits { color: #333; font-size: 10px; font-family: Arial; font-weight: 400; margin-top: 8px; line-height: 1.5; }
-
-/* ── MOBILE ───────────────────────────────────── */
-@media (max-width: 600px) {
-  nav { padding: 0 1rem; height: 56px; }
-  .logo img { height: 36px; }
-  .section-header { padding: 1.8rem 1rem 1rem; gap: 10px; }
-  .section-title { font-size: 16px; letter-spacing: 2px; }
-  .section-bar { height: 24px; }
-  .hero-emission { margin: 0 1rem 1.2rem; }
-  .hero-overlay-ttl { font-size: 16px; }
-  .play-btn { width: 52px; height: 52px; }
-  .play-arrow { border-top-width: 12px; border-bottom-width: 12px; border-left-width: 20px; }
-  .emissions-grid { grid-template-columns: 1fr; gap: 1rem; padding: 0 1rem; }
-  .themes-tabs { padding: 0 1rem 1rem; }
-  .tab { padding: 7px 12px; font-size: 10px; letter-spacing: 1px; }
-  .theme-section { padding: 0 1rem 1.2rem; }
-  .extraits-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .shorts-wrap { padding: 0 1rem; }
-  .short-card { width: 110px; }
-  .short-thumb { width: 110px; height: 196px; }
-  .coulisses-hero { padding: 2rem 1rem 1.5rem; }
-  .coulisses-hero h1 { font-size: 24px; letter-spacing: 2px; }
-  .coulisses-grid { grid-template-columns: 1fr; gap: 1.2rem; padding: 1.5rem 1rem 2rem; }
-  .series-grid { grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.5rem 1rem; }
-  .projets-grid { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
-  .page-full-grid { grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; }
-  .page-hero { padding: 2rem 1rem 1.5rem; }
-  .page-hero h1 { font-size: 22px; letter-spacing: 2px; }
-  footer { padding: 1rem; }
-  .modal-overlay { padding: 0; align-items: flex-end; }
-  .modal-box { max-width: 100%; border-radius: 0; }
-  .modal-box.vertical { max-width: 100%; }
-  .modal-close { top: 10px; right: 10px; position: fixed; background: rgba(0,0,0,0.7); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; z-index: 300; }
-  .modal-credits-btn { display: none !important; }
-  .modal-credits-btn-mobile { display: block; }
-  .modal-credits-panel { display: none !important; }
-  body { padding-bottom: 56px; }
-  .mobile-nav-bar { display: flex; }
-}
-@media (min-width: 601px) {
-  .modal-credits-btn { display: block; }
-  .modal-credits-panel { display: block; }
-  .mobile-nav-bar { display: none; }
-}
-
-.settings-btn {
-  background: none; border: none; cursor: pointer; padding: 6px;
-  color: #666; transition: color 0.2s;
-}
-.settings-btn:hover { color: #4cbe1a; }
-.settings-btn svg { width: 22px; height: 22px; display: block; }
-
-/* Modale paramètres */
-.settings-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.85); z-index: 400;
-  align-items: center; justify-content: center;
-}
-.settings-overlay.open { display: flex; }
-.settings-box {
-  background: #111; border: 1px solid #222;
-  width: 90%; max-width: 420px; padding: 28px;
-  position: relative;
-}
-.settings-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #4cbe1a;
-}
-.settings-header h2 { font-size: 14px; font-weight: 900; color: #fff; letter-spacing: 3px; text-transform: uppercase; }
-.settings-close { background: none; border: none; color: #555; font-size: 22px; cursor: pointer; line-height: 1; }
-.settings-close:hover { color: #4cbe1a; }
-.settings-section-title { color: #4cbe1a; font-size: 9px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
-.settings-text { font-size: 12px; color: #666; font-family: Arial; font-weight: 400; line-height: 1.7; margin-bottom: 20px; }
-.settings-text strong { color: #aaa; font-weight: 700; }
-.settings-version { font-size: 10px; color: #333; font-family: Arial; font-weight: 400; margin-top: 16px; padding-top: 14px; border-top: 1px solid #1a1a1a; }
-.mobile-nav-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
-  background: #0a0a0a; border-top: 2px solid #4cbe1a; height: 56px;
-}
-.mobile-nav-bar a {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: #555; text-decoration: none; font-size: 8px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase; gap: 3px; cursor: pointer; transition: color 0.2s;
-}
-.mobile-nav-bar a.active, .mobile-nav-bar a:hover { color: #4cbe1a; }
-.mobile-nav-bar a svg { width: 18px; height: 18px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L'Impact — L'info qui frappe juste.">
+  <title>L'Impact — L'info qui frappe juste.</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#accueil" aria-label="Accueil L'Impact">
+        <img src="assets/logo-impact.png" alt="L'Impact — L'info qui frappe juste">
+      </a>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-wrapper" id="modalWrapper">
-    <div class="modal-box" id="modalBox">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <button class="modal-credits-btn" id="modalCreditsBtn" onclick="toggleCreditsPanel()">CRÉDITS</button>
-      <div class="modal-player" id="modalPlayer"></div>
-      <div class="modal-info">
-        <div class="modal-theme" id="modalTheme"></div>
-        <div class="modal-title" id="modalTitle"></div>
-        <div class="modal-date" id="modalDate"></div>
+      <button class="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+
+      <nav class="main-nav" aria-label="Navigation principale">
+        <a href="#accueil">Accueil</a>
+        <a href="#actualites">Actualités</a>
+        <a href="#shorts">Shorts</a>
+        <a href="#histoire">Histoire</a>
+        <a href="#automobile">Automobile</a>
+        <a href="#sport">Sport</a>
+        <a href="#tech">Tech</a>
+        <a href="#apropos">À propos</a>
+        <a href="#sources">Sources</a>
+        <a href="#commentaires">Commentaires</a>
+      </nav>
+
+      <button class="search-button" id="openSearch" aria-label="Rechercher">⌕</button>
+    </div>
+  </header>
+
+  <main id="accueil">
+    <section class="hero">
+      <div class="hero-content">
+        <span class="eyebrow">L'INFO QUI FRAPPE JUSTE.</span>
+        <h1>L'actualité,<br><span>sans détour.</span></h1>
+        <p>Des sujets qui comptent, des formats courts et des reportages pensés pour aller à l'essentiel.</p>
+        <a class="btn btn-primary" href="#actualites">Voir les vidéos</a>
       </div>
-      <button class="modal-credits-btn-mobile" id="modalCreditsBtnMobile" onclick="openCreditsView()" style="display:none">CRÉDITS ↓</button>
-    </div>
-    <div class="modal-credits-panel" id="modalCreditsPanel">
-      <div class="modal-credits-panel-inner">
-        <div class="panel-label">CRÉDITS <button class="panel-close" onclick="toggleCreditsPanel()">✕</button></div>
-        <div class="credits-grid" id="modalCreditsPanelGrid"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- VUE CRÉDITS MOBILE -->
-<div class="modal-credits-view" id="modalCreditsView">
-  <div class="credits-view-header">
-    <button class="credits-back-btn" onclick="closeCreditsView()">←</button>
-    <div>
-      <div class="credits-view-theme" id="creditsViewTheme"></div>
-      <div class="credits-view-title" id="creditsViewTitle"></div>
-    </div>
-  </div>
-  <div class="credits-view-grid" id="creditsViewGrid"></div>
-</div>
-
-<!-- MODALE PARAMÈTRES -->
-<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-  <div class="settings-box">
-    <div class="settings-header">
-      <h2>⚙️ Paramètres</h2>
-      <button class="settings-close" onclick="closeSettings()">✕</button>
-    </div>
-    <div class="settings-section-title">Crédits du site</div>
-    <div class="settings-text">
-      Ce site a été entièrement développé par <strong>Germain Bordeaux</strong> et testé par <strong>Charlotte Cépac</strong>.
-    </div>
-    <div class="settings-section-title">À propos</div>
-    <div class="settings-text">
-      Site officiel de <strong>L'Impact</strong> — le journal télévisé indépendant.<br>
-      Propulsé par <strong>Videas</strong> pour la diffusion vidéo.
-    </div>
-    <div class="settings-version">© L'Impact — L'info qui frappe juste.</div>
-  </div>
-</div>
-
-<!-- MENU HAMBURGER OVERLAY -->
-<div class="side-overlay" id="sideOverlay" onclick="closeSideMenu()"></div>
-<div class="side-menu" id="sideMenu">
-  <div class="side-menu-header">
-    <img src="https://i.imgur.com/8pQtdwx.png" alt="L'Impact" />
-    <button class="side-close" onclick="closeSideMenu()">✕</button>
-  </div>
-  <nav class="side-nav">
-    <a onclick="showPage('main'); closeSideMenu()">
-      <span class="nav-icon">📺</span> Émissions entières
-    </a>
-    <a onclick="showPage('page-extraits'); closeSideMenu()">
-      <span class="nav-icon">✂️</span> Extraits d'émissions
-    </a>
-    <a onclick="showPage('page-shorts'); closeSideMenu()">
-      <span class="nav-icon">📱</span> Shorts
-    </a>
-    <div class="nav-divider"></div>
-    <a onclick="showPage('coulisses'); closeSideMenu()">
-      <span class="nav-icon">🎬</span> Dans les coulisses
-    </a>
-    <a onclick="showPage('page-retro'); closeSideMenu()">
-      <span class="nav-icon">🚗</span> Dans le rétro
-    </a>
-    <a onclick="showPage('page-genant'); closeSideMenu()">
-      <span class="nav-icon">😬</span> Gênant !
-    </a>
-    <div class="nav-divider"></div>
-    <a onclick="showPage('page-projets'); closeSideMenu()">
-      <span class="nav-icon">🌟</span> Plus de notre équipe
-    </a>
-  </nav>
-  <div class="side-footer-credits">
-    Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.
-  </div>
-</div>
-
-<!-- NAV -->
-<nav>
-  <button class="hamburger" onclick="openSideMenu()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" onclick="showPage('main')" /></div>
-  <button class="settings-btn" onclick="openSettings()" aria-label="Paramètres">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-    </svg>
-  </button>
-</nav>
-
-<!-- ══════════════════════════════════════════════
-     PAGE PRINCIPALE
-══════════════════════════════════════════════ -->
-<div class="page active" id="page-main">
-  <!-- S1 — ÉMISSIONS -->
-  <div class="s1" id="s1">
-    <div class="section-header">
-      <div class="section-bar"></div>
-      <div class="section-title">Émissions complètes</div>
-      <div class="section-count">6 ÉPISODES</div>
-    </div>
-    <div class="hero-emission" onclick="openModal('ID_VIDEAS_ICI','Émission #24','L\'Impact du vendredi — Budget, réforme des retraites et tensions sociales','27 juin 2025','landscape','')">
-      <div class="hero-thumb">
-        <div class="new-badge">NOUVEAU</div>
-        <div class="play-btn"><div class="play-arrow"></div></div>
-        <div class="duration">52:14</div>
-        <div class="hero-overlay">
-          <div class="hero-overlay-ep">Émission #24 · 27 juin 2025</div>
-          <div class="hero-overlay-ttl">L'Impact du vendredi — Budget, réforme des retraites et tensions sociales</div>
-          <div class="hero-overlay-sub">DERNIÈRE ÉMISSION</div>
+      <div class="hero-card">
+        <div class="live-badge"><span></span> À LA UNE</div>
+        <div class="hero-video-wrap">
+          <video id="heroVideo" controls playsinline preload="metadata" poster="assets/logo-impact.png"></video>
+        </div>
+        <div class="hero-card-body">
+          <div class="category">À LA UNE</div>
+          <h2 id="heroTitle">Chargement de la vidéo...</h2>
+          <p id="heroDescription"></p>
         </div>
       </div>
-    </div>
-    <div class="emissions-grid">
-      <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Émission #23','Présidentielle 2027 — les candidats se positionnent','20 juin 2025','landscape','')">
-        <div class="em-thumb"><div class="em-bg1"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">48:32</div><div class="em-overlay"><div class="em-overlay-ep">Émission #23 · 20 juin</div><div class="em-overlay-ttl">Présidentielle 2027 — les candidats se positionnent</div></div></div>
-      </div>
-      <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Émission #22','Crise du logement — un an après la loi Habitat','13 juin 2025','landscape','')">
-        <div class="em-thumb"><div class="em-bg2"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">55:07</div><div class="em-overlay"><div class="em-overlay-ep">Émission #22 · 13 juin</div><div class="em-overlay-ttl">Crise du logement — un an après la loi Habitat</div></div></div>
-      </div>
-      <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Émission #21','IA et emploi — faut-il avoir peur ?','6 juin 2025','landscape','')">
-        <div class="em-thumb"><div class="em-bg3"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">44:50</div><div class="em-overlay"><div class="em-overlay-ep">Émission #21 · 6 juin</div><div class="em-overlay-ttl">IA et emploi — faut-il avoir peur ?</div></div></div>
-      </div>
-      <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Émission #20','Environnement — les engagements non tenus','30 mai 2025','landscape','')">
-        <div class="em-thumb"><div class="em-bg4"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">50:22</div><div class="em-overlay"><div class="em-overlay-ep">Émission #20 · 30 mai</div><div class="em-overlay-ttl">Environnement — les engagements non tenus</div></div></div>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- S2 — EXTRAITS (résumé sur accueil) -->
-  <div class="s2" id="s2">
-    <div class="section-header">
-      <div class="section-bar"></div>
-      <div class="section-title">Extraits thématiques</div>
-      <div class="section-count">24 EXTRAITS</div>
-    </div>
-    <div class="themes-tabs">
-      <div class="tab active" onclick="filterTheme(this,'tous')">Tous</div>
-      <div class="tab" onclick="filterTheme(this,'pol')">Politique</div>
-      <div class="tab" onclick="filterTheme(this,'soc')">Société</div>
-      <div class="tab" onclick="filterTheme(this,'eco')">Économie</div>
-      <div class="tab" onclick="filterTheme(this,'int')">International</div>
-      <div class="tab" onclick="filterTheme(this,'cul')">Culture</div>
-      <div class="tab" onclick="filterTheme(this,'spt')">Sport</div>
-    </div>
-    <div class="theme-section" id="ts-pol">
-      <div class="theme-label"><div class="theme-dot"></div><div class="theme-name">Politique</div></div>
-      <div class="extraits-grid">
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Politique','Macron face aux syndicats — la rupture','26 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg1"></div><div class="ex-badge badge-pol">Politique</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:12</div><div class="ex-overlay"><div class="ex-overlay-ttl">Macron face aux syndicats — la rupture</div><div class="ex-overlay-date">26 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Politique','Motion de censure : ce qui change vraiment','24 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg2"></div><div class="ex-badge badge-pol">Politique</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">6:45</div><div class="ex-overlay"><div class="ex-overlay-ttl">Motion de censure : ce qui change vraiment</div><div class="ex-overlay-date">24 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Politique','Bardella et Mélenchon — le match','20 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg3"></div><div class="ex-badge badge-pol">Politique</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">3:58</div><div class="ex-overlay"><div class="ex-overlay-ttl">Bardella et Mélenchon — le match</div><div class="ex-overlay-date">20 juin 2025</div></div></div></div>
-      </div>
-    </div>
-    <div class="theme-section" id="ts-soc">
-      <div class="theme-label"><div class="theme-dot"></div><div class="theme-name">Société</div></div>
-      <div class="extraits-grid">
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Société','Violences scolaires — les chiffres alarmants','25 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg4"></div><div class="ex-badge badge-soc">Société</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:30</div><div class="ex-overlay"><div class="ex-overlay-ttl">Violences scolaires — les chiffres alarmants</div><div class="ex-overlay-date">25 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Société','SDF en France — le silence de l\'État','22 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg5"></div><div class="ex-badge badge-soc">Société</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">7:02</div><div class="ex-overlay"><div class="ex-overlay-ttl">SDF en France — le silence de l\'État</div><div class="ex-overlay-date">22 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Société','Cannabis légal — enquête dans les quartiers','18 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg6"></div><div class="ex-badge badge-soc">Société</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:44</div><div class="ex-overlay"><div class="ex-overlay-ttl">Cannabis légal — enquête dans les quartiers</div><div class="ex-overlay-date">18 juin 2025</div></div></div></div>
-      </div>
-    </div>
-    <div class="theme-section" id="ts-eco">
-      <div class="theme-label"><div class="theme-dot"></div><div class="theme-name">Économie</div></div>
-      <div class="extraits-grid">
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Économie','Inflation — pourquoi les prix ne baissent pas','23 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg2"></div><div class="ex-badge badge-eco">Économie</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:15</div><div class="ex-overlay"><div class="ex-overlay-ttl">Inflation — pourquoi les prix ne baissent pas</div><div class="ex-overlay-date">23 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Économie','Chômage record chez les jeunes','19 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg3"></div><div class="ex-badge badge-eco">Économie</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">6:20</div><div class="ex-overlay"><div class="ex-overlay-ttl">Chômage record chez les jeunes</div><div class="ex-overlay-date">19 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Économie','Taxe sur les superprofits — fantasme ou solution ?','14 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg1"></div><div class="ex-badge badge-eco">Économie</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:00</div><div class="ex-overlay"><div class="ex-overlay-ttl">Taxe sur les superprofits</div><div class="ex-overlay-date">14 juin 2025</div></div></div></div>
-      </div>
-    </div>
-    <div class="theme-section" id="ts-int">
-      <div class="theme-label"><div class="theme-dot"></div><div class="theme-name">International</div></div>
-      <div class="extraits-grid">
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','International','Gaza — ce que les médias ne montrent pas','26 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg4"></div><div class="ex-badge badge-int">International</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">8:10</div><div class="ex-overlay"><div class="ex-overlay-ttl">Gaza — ce que les médias ne montrent pas</div><div class="ex-overlay-date">26 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','International','Ukraine — la fatigue de la guerre','21 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg5"></div><div class="ex-badge badge-int">International</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:55</div><div class="ex-overlay"><div class="ex-overlay-ttl">Ukraine — la fatigue de la guerre</div><div class="ex-overlay-date">21 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','International','Trump vs le reste du monde','17 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg6"></div><div class="ex-badge badge-int">International</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:30</div><div class="ex-overlay"><div class="ex-overlay-ttl">Trump vs le reste du monde</div><div class="ex-overlay-date">17 juin 2025</div></div></div></div>
-      </div>
-    </div>
-    <div class="theme-section" id="ts-cul">
-      <div class="theme-label"><div class="theme-dot"></div><div class="theme-name">Culture</div></div>
-      <div class="extraits-grid">
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Culture','Cinéma français — la fin d\'une époque ?','24 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg1"></div><div class="ex-badge badge-cul">Culture</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">3:45</div><div class="ex-overlay"><div class="ex-overlay-ttl">Cinéma français — la fin d\'une époque ?</div><div class="ex-overlay-date">24 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Culture','Rap et politique — une histoire d\'amour haine','18 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg2"></div><div class="ex-badge badge-cul">Culture</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">6:05</div><div class="ex-overlay"><div class="ex-overlay-ttl">Rap et politique — une histoire d\'amour haine</div><div class="ex-overlay-date">18 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Culture','JO 2024 — l\'héritage un an après','12 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg3"></div><div class="ex-badge badge-cul">Culture</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:22</div><div class="ex-overlay"><div class="ex-overlay-ttl">JO 2024 — l\'héritage un an après</div><div class="ex-overlay-date">12 juin 2025</div></div></div></div>
-      </div>
-    </div>
-    <div class="theme-section" id="ts-spt">
-      <div class="theme-label"><div class="theme-dot"></div><div class="theme-name">Sport</div></div>
-      <div class="extraits-grid">
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Sport','Équipe de France — la crise de confiance','25 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg5"></div><div class="ex-badge badge-spt">Sport</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:10</div><div class="ex-overlay"><div class="ex-overlay-ttl">Équipe de France — la crise de confiance</div><div class="ex-overlay-date">25 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Sport','Dopage — les vérités cachées du sport','20 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg6"></div><div class="ex-badge badge-spt">Sport</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:48</div><div class="ex-overlay"><div class="ex-overlay-ttl">Dopage — les vérités cachées du sport</div><div class="ex-overlay-date">20 juin 2025</div></div></div></div>
-        <div class="ex-card" onclick="openModal('ID_VIDEAS_ICI','Sport','PSG sans Mbappé — bilan','15 juin 2025','landscape','')"><div class="ex-thumb"><div class="ex-bg4"></div><div class="ex-badge badge-spt">Sport</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">3:30</div><div class="ex-overlay"><div class="ex-overlay-ttl">PSG sans Mbappé — bilan</div><div class="ex-overlay-date">15 juin 2025</div></div></div></div>
-      </div>
-    </div>
-  </div>
+    <section class="ticker" aria-label="Dernières informations">
+      <div class="ticker-label">FLASH</div>
+      <div class="ticker-track" id="tickerTrack"></div>
+    </section>
 
-  <!-- S3 — SHORTS -->
-  <div class="s3" id="s3">
-    <div class="section-header">
-      <div class="section-bar"></div>
-      <div class="section-title">Shorts</div>
-      <div class="section-count">FORMAT VERTICAL</div>
-    </div>
-    <div class="shorts-wrap">
-      <div class="shorts-carousel">
-        <div class="short-card" onclick="openModal('51e8e715-de86-49a2-9736-55a1da985e39','Short','L\'Acétamipride de retour ?','30 juin','portrait','Journaliste:Prénom Nom|Vulgarisateur:Prénom Nom|Monteur:Prénom Nom')">
-          <div class="short-thumb"><div class="sh-bg1"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">0:58</div><div class="sh-overlay"><div class="sh-overlay-ttl">L\'Acétamipride de retour ?</div><div class="sh-overlay-date">30 juin</div></div></div>
+    <section class="section" id="actualites">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">NOS VIDÉOS</span>
+          <h2>L'actualité en vidéo</h2>
         </div>
-        <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Ce que cache vraiment l\'inflation','26 juin','portrait','')"><div class="short-thumb"><div class="sh-bg2"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">1:02</div><div class="sh-overlay"><div class="sh-overlay-ttl">Ce que cache vraiment l\'inflation</div><div class="sh-overlay-date">26 juin</div></div></div></div>
-        <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Gaza — ce qu\'on ne vous dit pas','25 juin','portrait','')"><div class="short-thumb"><div class="sh-bg3"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">0:45</div><div class="sh-overlay"><div class="sh-overlay-ttl">Gaza — ce qu\'on ne vous dit pas</div><div class="sh-overlay-date">25 juin</div></div></div></div>
-        <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Nucléaire — vrai ou faux en 1 minute','23 juin','portrait','')"><div class="short-thumb"><div class="sh-bg4"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">1:15</div><div class="sh-overlay"><div class="sh-overlay-ttl">Nucléaire — vrai ou faux en 1 minute</div><div class="sh-overlay-date">23 juin</div></div></div></div>
-        <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Féminicides — pourquoi ça continue','21 juin','portrait','')"><div class="short-thumb"><div class="sh-bg5"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">0:52</div><div class="sh-overlay"><div class="sh-overlay-ttl">Féminicides — pourquoi ça continue</div><div class="sh-overlay-date">21 juin</div></div></div></div>
-        <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Sécheresse 2025 — alerte rouge','19 juin','portrait','')"><div class="short-thumb"><div class="sh-bg6"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">1:08</div><div class="sh-overlay"><div class="sh-overlay-ttl">Sécheresse 2025 — alerte rouge</div><div class="sh-overlay-date">19 juin</div></div></div></div>
+        <div class="filters" id="filters">
+          <button class="filter active" data-category="Tous">Tous</button>
+          <button class="filter" data-category="Actualités">Actualités</button>
+          <button class="filter" data-category="Histoire">Histoire</button>
+          <button class="filter" data-category="Automobile">Automobile</button>
+          <button class="filter" data-category="Sport">Sport</button>
+          <button class="filter" data-category="Tech">Tech</button>
+        </div>
       </div>
-      <div class="swipe-hint"><span class="swipe-arrows">← →</span><span>Swiper pour voir plus de shorts</span></div>
+
+      <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+    <section class="split-section section" id="histoire">
+      <div class="split-text">
+        <span class="eyebrow">SÉRIE — HISTOIRE</span>
+        <h2>Comprendre le passé pour mieux lire le présent.</h2>
+        <p>Une série consacrée aux grandes histoires, aux marques, aux inventions et aux événements qui ont façonné notre monde.</p>
+        <a class="btn btn-secondary" href="#actualites" data-filter-link="Histoire">Explorer Histoire</a>
+      </div>
+      <div class="split-number">01</div>
+    </section>
+
+    <section class="split-section section reverse" id="automobile">
+      <div class="split-text">
+        <span class="eyebrow">SÉRIE — AUTOMOBILE</span>
+        <h2>Dans le rétro : l'histoire de l'automobile.</h2>
+        <p>L'histoire de l'automobile et des marques aujourd'hui mythiques, racontée à travers leurs origines, leurs modèles et les histoires qui ont construit leur légende.</p>
+        <a class="btn btn-secondary" href="#actualites" data-filter-link="Automobile">Découvrir Dans le rétro</a>
+      </div>
+      <div class="split-number">02</div>
+    </section>
+
+    <section class="section shorts-section" id="shorts">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">FORMAT VERTICAL</span>
+          <h2>Shorts</h2>
+        </div>
+        <a class="btn btn-secondary" href="#shorts">Voir tous les shorts</a>
+      </div>
+      <div class="shorts-track" id="shortsTrack"></div>
+      <div class="shorts-hint">← Glisser pour voir plus →</div>
+    </section>
+
+    <section class="section compact-section" id="sport">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">SPORT</span>
+          <h2>Le sport qui fait vibrer.</h2>
+        </div>
+      </div>
+      <div class="sport-banner">
+        <div>
+          <span class="sport-dot"></span>
+          <strong>IMPACT SPORT</strong>
+        </div>
+        <p>Retrouvez nos sujets sport dans la sélection vidéo.</p>
+        <a class="btn btn-primary" href="#actualites" data-filter-link="Sport">Voir les vidéos</a>
+      </div>
+    </section>
+
+    <section class="section compact-section" id="tech">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">TECH</span>
+          <h2>La technologie, expliquée simplement.</h2>
+        </div>
+      </div>
+      <div class="tech-grid">
+        <article><span>01</span><h3>Décryptage</h3><p>Comprendre les nouvelles technologies sans jargon.</p></article>
+        <article><span>02</span><h3>Internet</h3><p>Les services, plateformes et tendances qui changent nos usages.</p></article>
+        <article><span>03</span><h3>Innovations</h3><p>Les idées qui pourraient transformer demain.</p></article>
+      </div>
+    </section>
+
+    <section class="about section" id="apropos">
+      <span class="eyebrow">À PROPOS</span>
+      <h2>L'Impact</h2>
+      <p>L'Impact est un média vidéo indépendant imaginé pour raconter l'information avec un ton clair, direct et moderne.</p>
+      <div class="about-grid">
+        <div><strong>01</strong><span>Clair</span><p>Pas de détour inutile.</p></div>
+        <div><strong>02</strong><span>Direct</span><p>Des formats qui vont à l'essentiel.</p></div>
+        <div><strong>03</strong><span>Curieux</span><p>De l'actualité à l'histoire, en passant par l'auto et la tech.</p></div>
+      </div>
+    </section>
+    <section class="section sources-section" id="sources">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">TRANSPARENCE</span>
+          <h2>Sources & archives</h2>
+        </div>
+      </div>
+      <p class="sources-intro">L'Impact rend publics ses rushs, scripts et documents de travail. Retrouvez ci-dessous l'ensemble des fichiers classés par dossier.</p>
+      <div class="drive-browser" id="driveBrowser">
+        <div class="drive-loading">Chargement des fichiers...</div>
+      </div>
+    </section>
+
+    <section class="section comments-section" id="commentaires">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">COMMUNAUTÉ</span>
+          <h2>Commentaires</h2>
+        </div>
+      </div>
+      <script src="https://giscus.app/client.js"
+        data-repo="germainbordeaux/limpact"
+        data-repo-id="R_kgDOUGcmVg"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOUGcmVs4DEX9C"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="dark_dimmed"
+        data-lang="fr"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <img src="assets/logo-impact.png" alt="L'Impact">
+      <p>© <span id="year"></span> L'Impact — L'info qui frappe juste.</p>
+      <div class="footer-links">
+        <a href="#apropos">À propos</a>
+        <a href="#accueil">Retour en haut ↑</a>
+      </div>
     </div>
-  </div>
-  <footer>
-    <div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div>
-    <div class="footer-tag">L'info qui frappe juste.</div>
-    <div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div>
   </footer>
-</div>
 
-<!-- ══════════════════════════════════════════════
-     PAGE COULISSES
-══════════════════════════════════════════════ -->
-<div class="page" id="page-coulisses">
-  <div class="coulisses-hero">
-    <div class="tag">Accès exclusif</div>
-    <h1>Les Coulisses</h1>
-    <p>Interviews de l'équipe, vidéos des tournages et secrets de fabrication.</p>
-  </div>
-  <div class="section-header"><div class="section-bar"></div><div class="section-title">Tous les contenus</div><div class="section-count">9 VIDÉOS</div></div>
-  <div class="coulisses-grid">
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Interview','Comment on prépare une émission L\'Impact ?','15 juin 2025','landscape','')"><div class="co-thumb"><div class="co-bg1"></div><div class="co-badge badge-interview">Interview</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">8:24</div><div class="co-overlay"><div class="co-overlay-ttl">Comment on prépare une émission L\'Impact ?</div><div class="co-overlay-sub">Interview · Rédaction en chef</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Tournage','Une journée de tournage avec l\'équipe','10 juin 2025','landscape','')"><div class="co-thumb"><div class="co-bg2"></div><div class="co-badge badge-tournage">Tournage</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">5:12</div><div class="co-overlay"><div class="co-overlay-ttl">Une journée de tournage avec l\'équipe</div><div class="co-overlay-sub">Coulisses · Caméra cachée</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Secret','Pourquoi on a choisi ce plateau ?','8 juin 2025','landscape','')"><div class="co-thumb"><div class="co-bg3"></div><div class="co-badge badge-secret">Secret</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">3:45</div><div class="co-overlay"><div class="co-overlay-ttl">Pourquoi on a choisi ce plateau ?</div><div class="co-overlay-sub">Secret de tournage · Décors</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Interview','Le journaliste répond à vos questions','5 juin 2025','landscape','')"><div class="co-thumb"><div class="co-bg4"></div><div class="co-badge badge-interview">Interview</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">12:08</div><div class="co-overlay"><div class="co-overlay-ttl">Le journaliste répond à vos questions</div><div class="co-overlay-sub">Interview · Questions abonnés</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Secret','Le son : notre obsession','3 juin 2025','landscape','')"><div class="co-thumb"><div class="co-bg5"></div><div class="co-badge badge-secret">Secret</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">4:30</div><div class="co-overlay"><div class="co-overlay-ttl">Le son : notre obsession</div><div class="co-overlay-sub">Secret de tournage · Audio</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Tournage','Avant/après — la magie du montage','1 juin 2025','landscape','')"><div class="co-thumb"><div class="co-bg6"></div><div class="co-badge badge-tournage">Tournage</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">6:55</div><div class="co-overlay"><div class="co-overlay-ttl">Avant/après — la magie du montage</div><div class="co-overlay-sub">Coulisses · Post-production</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Interview','L\'équipe se présente','28 mai 2025','landscape','')"><div class="co-thumb"><div class="co-bg2"></div><div class="co-badge badge-interview">Interview</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">9:17</div><div class="co-overlay"><div class="co-overlay-ttl">L\'équipe se présente</div><div class="co-overlay-sub">Interview · Portrait collectif</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Secret','Comment on choisit nos sujets ?','25 mai 2025','landscape','')"><div class="co-thumb"><div class="co-bg3"></div><div class="co-badge badge-secret">Secret</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">5:40</div><div class="co-overlay"><div class="co-overlay-ttl">Comment on choisit nos sujets ?</div><div class="co-overlay-sub">Secret · Ligne éditoriale</div></div></div></div>
-    <div class="co-card" onclick="openModal('ID_VIDEAS_ICI','Tournage','Les bloopers de la saison 1','20 mai 2025','landscape','')"><div class="co-thumb"><div class="co-bg1"></div><div class="co-badge badge-tournage">Tournage</div><div class="co-play"><div class="co-arrow"></div></div><div class="co-dur">7:02</div><div class="co-overlay"><div class="co-overlay-ttl">Les bloopers de la saison 1</div><div class="co-overlay-sub">Coulisses · Fous rires garantis</div></div></div></div>
-  </div>
-  <footer><div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div><div class="footer-tag">L'info qui frappe juste.</div><div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div></footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE DANS LE RÉTRO
-══════════════════════════════════════════════ -->
-<div class="page" id="page-retro">
-  <div class="page-hero" style="background: linear-gradient(180deg, #1a0d0d 0%, #0a0a0a 100%);">
-    <div class="tag">Série</div>
-    <h1>Dans le rétro</h1>
-    <p>Une série d'émissions sur l'histoire de l'automobile — ses pionniers, ses révolutions et ses secrets.</p>
-  </div>
-  <div class="section-header"><div class="section-bar"></div><div class="section-title">Tous les épisodes</div><div class="section-count">À VENIR</div></div>
-  <div class="series-grid">
-    <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Dans le rétro','Épisode 1 — Les pionniers de l\'automobile','1 jan 2025','landscape','')"><div class="em-thumb"><div class="em-bg1"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">28:14</div><div class="em-overlay"><div class="em-overlay-ep">Épisode 1</div><div class="em-overlay-ttl">Les pionniers de l\'automobile</div></div></div></div>
-    <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Dans le rétro','Épisode 2 — La révolution Ford','15 jan 2025','landscape','')"><div class="em-thumb"><div class="em-bg2"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">31:07</div><div class="em-overlay"><div class="em-overlay-ep">Épisode 2</div><div class="em-overlay-ttl">La révolution Ford</div></div></div></div>
-    <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Dans le rétro','Épisode 3 — Le âge d\'or de la Formule 1','1 fév 2025','landscape','')"><div class="em-thumb"><div class="em-bg3"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">35:22</div><div class="em-overlay"><div class="em-overlay-ep">Épisode 3</div><div class="em-overlay-ttl">L\'âge d\'or de la Formule 1</div></div></div></div>
-  </div>
-  <footer><div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div><div class="footer-tag">L'info qui frappe juste.</div><div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div></footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE GÊNANT !
-══════════════════════════════════════════════ -->
-<div class="page" id="page-genant">
-  <div class="page-hero" style="background: linear-gradient(180deg, #1a0d1a 0%, #0a0a0a 100%);">
-    <div class="tag">Série</div>
-    <h1>Gênant !</h1>
-    <p>Une série sur le regard des autres et l\'importance qu\'il prend dans notre vie quotidienne.</p>
-  </div>
-  <div class="section-header"><div class="section-bar"></div><div class="section-title">Tous les épisodes</div><div class="section-count">À VENIR</div></div>
-  <div class="series-grid">
-    <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Gênant !','Épisode 1 — Le regard dans les transports','10 mars 2025','landscape','')"><div class="em-thumb"><div class="em-bg4"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">22:30</div><div class="em-overlay"><div class="em-overlay-ep">Épisode 1</div><div class="em-overlay-ttl">Le regard dans les transports</div></div></div></div>
-    <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Gênant !','Épisode 2 — Réseaux sociaux et validation','25 mars 2025','landscape','')"><div class="em-thumb"><div class="em-bg5"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">26:14</div><div class="em-overlay"><div class="em-overlay-ep">Épisode 2</div><div class="em-overlay-ttl">Réseaux sociaux et validation</div></div></div></div>
-    <div class="em-card" onclick="openModal('ID_VIDEAS_ICI','Gênant !','Épisode 3 — L\'angoisse du jugement','10 avr 2025','landscape','')"><div class="em-thumb"><div class="em-bg6"></div><div class="em-play"><div class="sm-arrow"></div></div><div class="em-dur">29:50</div><div class="em-overlay"><div class="em-overlay-ep">Épisode 3</div><div class="em-overlay-ttl">L\'angoisse du jugement</div></div></div></div>
-  </div>
-  <footer><div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div><div class="footer-tag">L'info qui frappe juste.</div><div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div></footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE PLUS DE NOTRE ÉQUIPE
-══════════════════════════════════════════════ -->
-<div class="page" id="page-projets">
-  <div class="page-hero" style="background: linear-gradient(180deg, #0d0d1a 0%, #0a0a0a 100%);">
-    <div class="tag">Notre équipe</div>
-    <h1>Plus de notre équipe</h1>
-    <p>Découvrez les autres projets et créations des membres de L\'Impact.</p>
-  </div>
-  <div class="section-header"><div class="section-bar"></div><div class="section-title">Nos projets</div><div class="section-count">4 PROJETS</div></div>
-  <div class="projets-grid">
-    <div class="projet-card">
-      <div class="projet-thumb">
-        <div class="projet-bg1"></div>
-        <div class="projet-date">Jan 2025</div>
-      </div>
-      <div class="projet-info">
-        <div class="projet-titre">Nom du projet</div>
-        <div class="projet-desc">Description du projet — à remplir dans le code.</div>
-      </div>
+  <div class="search-modal" id="searchModal" aria-hidden="true">
+    <div class="search-panel">
+      <button class="close-modal" id="closeSearch" aria-label="Fermer">×</button>
+      <span class="eyebrow">RECHERCHE</span>
+      <h2>Que cherchez-vous ?</h2>
+      <input id="searchInput" type="search" placeholder="Ex. Formule 1, histoire, technologie..." autocomplete="off">
+      <div id="searchResults" class="search-results"></div>
     </div>
-    <div class="projet-card">
-      <div class="projet-thumb">
-        <div class="projet-bg2"></div>
-        <div class="projet-date">Mars 2025</div>
-      </div>
-      <div class="projet-info">
-        <div class="projet-titre">Nom du projet</div>
-        <div class="projet-desc">Description du projet — à remplir dans le code.</div>
-      </div>
-    </div>
-    <div class="projet-card">
-      <div class="projet-thumb">
-        <div class="projet-bg3"></div>
-        <div class="projet-date">Mai 2025</div>
-      </div>
-      <div class="projet-info">
-        <div class="projet-titre">Nom du projet</div>
-        <div class="projet-desc">Description du projet — à remplir dans le code.</div>
-      </div>
-    </div>
-    <div class="projet-card">
-      <div class="projet-thumb">
-        <div class="projet-bg4"></div>
-        <div class="projet-date">Juin 2025</div>
-      </div>
-      <div class="projet-info">
-        <div class="projet-titre">Nom du projet</div>
-        <div class="projet-desc">Description du projet — à remplir dans le code.</div>
+  </div>
+
+  <div class="video-modal" id="videoModal" aria-hidden="true">
+    <div class="video-panel">
+      <button class="close-modal" id="closeVideo" aria-label="Fermer">×</button>
+      <video id="modalVideo" controls playsinline></video>
+      <div class="modal-info">
+        <span class="category" id="modalCategory"></span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
       </div>
     </div>
   </div>
-  <footer><div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div><div class="footer-tag">L'info qui frappe juste.</div><div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div></footer>
-</div>
 
-<!-- ══════════════════════════════════════════════
-     PAGE DÉDIÉE EXTRAITS
-══════════════════════════════════════════════ -->
-<div class="page" id="page-extraits">
-  <div class="page-hero" style="background: linear-gradient(180deg, #0d1a0d 0%, #0a0a0a 100%);">
-    <div class="tag">Extraits</div>
-    <h1>Extraits d\'émissions</h1>
-    <p>Tous nos extraits thématiques — un sujet, une vidéo.</p>
-  </div>
-  <div class="section-header"><div class="section-bar"></div><div class="section-title">Extraits thématiques</div><div class="section-count">24 EXTRAITS</div></div>
-  <div class="themes-tabs" id="tabs2">
-    <div class="tab active" onclick="filterTheme2(this,'tous')">Tous</div>
-    <div class="tab" onclick="filterTheme2(this,'pol')">Politique</div>
-    <div class="tab" onclick="filterTheme2(this,'soc')">Société</div>
-    <div class="tab" onclick="filterTheme2(this,'eco')">Économie</div>
-    <div class="tab" onclick="filterTheme2(this,'int')">International</div>
-    <div class="tab" onclick="filterTheme2(this,'cul')">Culture</div>
-    <div class="tab" onclick="filterTheme2(this,'spt')">Sport</div>
-  </div>
-  <div style="padding: 0 2rem 3rem;">
-    <div class="extraits-grid" id="extraits-full-grid">
-      <div class="ex-card" data-theme="pol" onclick="openModal('ID_VIDEAS_ICI','Politique','Macron face aux syndicats','26 juin','landscape','')"><div class="ex-thumb"><div class="ex-bg1"></div><div class="ex-badge badge-pol">Politique</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">4:12</div><div class="ex-overlay"><div class="ex-overlay-ttl">Macron face aux syndicats</div><div class="ex-overlay-date">26 juin 2025</div></div></div></div>
-      <div class="ex-card" data-theme="soc" onclick="openModal('ID_VIDEAS_ICI','Société','Violences scolaires — les chiffres alarmants','25 juin','landscape','')"><div class="ex-thumb"><div class="ex-bg4"></div><div class="ex-badge badge-soc">Société</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:30</div><div class="ex-overlay"><div class="ex-overlay-ttl">Violences scolaires</div><div class="ex-overlay-date">25 juin 2025</div></div></div></div>
-      <div class="ex-card" data-theme="eco" onclick="openModal('ID_VIDEAS_ICI','Économie','Inflation — pourquoi les prix ne baissent pas','23 juin','landscape','')"><div class="ex-thumb"><div class="ex-bg2"></div><div class="ex-badge badge-eco">Économie</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:15</div><div class="ex-overlay"><div class="ex-overlay-ttl">Inflation — pourquoi les prix ne baissent pas</div><div class="ex-overlay-date">23 juin 2025</div></div></div></div>
-      <div class="ex-card" data-theme="int" onclick="openModal('ID_VIDEAS_ICI','International','Gaza — ce que les médias ne montrent pas','26 juin','landscape','')"><div class="ex-thumb"><div class="ex-bg4"></div><div class="ex-badge badge-int">International</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">8:10</div><div class="ex-overlay"><div class="ex-overlay-ttl">Gaza — ce que les médias ne montrent pas</div><div class="ex-overlay-date">26 juin 2025</div></div></div></div>
-      <div class="ex-card" data-theme="cul" onclick="openModal('ID_VIDEAS_ICI','Culture','Cinéma français — la fin d\'une époque ?','24 juin','landscape','')"><div class="ex-thumb"><div class="ex-bg1"></div><div class="ex-badge badge-cul">Culture</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">3:45</div><div class="ex-overlay"><div class="ex-overlay-ttl">Cinéma français — la fin d\'une époque ?</div><div class="ex-overlay-date">24 juin 2025</div></div></div></div>
-      <div class="ex-card" data-theme="spt" onclick="openModal('ID_VIDEAS_ICI','Sport','Équipe de France — la crise de confiance','25 juin','landscape','')"><div class="ex-thumb"><div class="ex-bg5"></div><div class="ex-badge badge-spt">Sport</div><div class="ex-play"><div class="xs-arrow"></div></div><div class="ex-dur">5:10</div><div class="ex-overlay"><div class="ex-overlay-ttl">Équipe de France — la crise de confiance</div><div class="ex-overlay-date">25 juin 2025</div></div></div></div>
+  <div class="short-modal" id="shortModal">
+    <div class="short-panel">
+      <button class="close-modal" id="closeShort" aria-label="Fermer">×</button>
+      <iframe id="shortIframe" frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen referrerpolicy="unsafe-url"
+        style="width:100%; aspect-ratio:9/16; display:block; background:#000; max-height:75vh;">
+      </iframe>
+      <div class="modal-info">
+        <span class="category" id="shortCategory"></span>
+        <h2 id="shortTitle"></h2>
+        <p id="shortDate" style="color:#777; font-size:12px;"></p>
+      </div>
     </div>
   </div>
-  <footer><div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div><div class="footer-tag">L'info qui frappe juste.</div><div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div></footer>
-</div>
 
-<!-- ══════════════════════════════════════════════
-     PAGE DÉDIÉE SHORTS
-══════════════════════════════════════════════ -->
-<div class="page" id="page-shorts">
-  <div class="page-hero" style="background: linear-gradient(180deg, #0a0d1a 0%, #0a0a0a 100%);">
-    <div class="tag">Shorts</div>
-    <h1>Shorts</h1>
-    <p>Toutes nos vidéos courtes format vertical — l\'info en moins de 2 minutes.</p>
-  </div>
-  <div class="section-header"><div class="section-bar"></div><div class="section-title">Tous les shorts</div><div class="section-count">FORMAT VERTICAL</div></div>
-  <div class="page-full-shorts">
-    <div class="short-card" onclick="openModal('51e8e715-de86-49a2-9736-55a1da985e39','Short','L\'Acétamipride de retour ?','30 juin','portrait','Journaliste:Prénom Nom|Vulgarisateur:Prénom Nom|Monteur:Prénom Nom')">
-      <div class="short-thumb"><div class="sh-bg1"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">0:58</div><div class="sh-overlay"><div class="sh-overlay-ttl">L\'Acétamipride de retour ?</div><div class="sh-overlay-date">30 juin</div></div></div>
-    </div>
-    <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Ce que cache vraiment l\'inflation','26 juin','portrait','')"><div class="short-thumb"><div class="sh-bg2"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">1:02</div><div class="sh-overlay"><div class="sh-overlay-ttl">Ce que cache vraiment l\'inflation</div><div class="sh-overlay-date">26 juin</div></div></div></div>
-    <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Gaza — ce qu\'on ne vous dit pas','25 juin','portrait','')"><div class="short-thumb"><div class="sh-bg3"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">0:45</div><div class="sh-overlay"><div class="sh-overlay-ttl">Gaza — ce qu\'on ne vous dit pas</div><div class="sh-overlay-date">25 juin</div></div></div></div>
-    <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Nucléaire — vrai ou faux','23 juin','portrait','')"><div class="short-thumb"><div class="sh-bg4"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">1:15</div><div class="sh-overlay"><div class="sh-overlay-ttl">Nucléaire — vrai ou faux</div><div class="sh-overlay-date">23 juin</div></div></div></div>
-    <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Féminicides — pourquoi ça continue','21 juin','portrait','')"><div class="short-thumb"><div class="sh-bg5"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">0:52</div><div class="sh-overlay"><div class="sh-overlay-ttl">Féminicides — pourquoi ça continue</div><div class="sh-overlay-date">21 juin</div></div></div></div>
-    <div class="short-card" onclick="openModal('ID_VIDEAS_ICI','Short','Sécheresse 2025 — alerte rouge','19 juin','portrait','')"><div class="short-thumb"><div class="sh-bg6"></div><div class="sh-play"><div class="sh-arrow"></div></div><div class="sh-dur">1:08</div><div class="sh-overlay"><div class="sh-overlay-ttl">Sécheresse 2025 — alerte rouge</div><div class="sh-overlay-date">19 juin</div></div></div></div>
-  </div>
-  <footer><div class="footer-logo"><img src="https://i.imgur.com/8pQtdwx.png" alt="Logo L'Impact" /></div><div class="footer-tag">L'info qui frappe juste.</div><div class="footer-credits">Ce site a été entièrement développé par Germain Bordeaux et testé par Charlotte Cépac.</div></footer>
-</div>
-
-<!-- BARRE NAV MOBILE -->
-<div class="mobile-nav-bar" id="mobileNav">
-  <a onclick="showPage('main')" id="mnav-main" class="active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="1"/><path d="M16 3l-4 4-4-4"/></svg>
-    Accueil
-  </a>
-  <a onclick="showPage('page-extraits')" id="mnav-extraits">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-    Extraits
-  </a>
-  <a onclick="showPage('page-shorts')" id="mnav-shorts">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/></svg>
-    Shorts
-  </a>
-  <a onclick="openSideMenu()" id="mnav-more">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    Plus
-  </a>
-</div>
-
-<script>
-function openSettings() {
-  document.getElementById('settingsOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeSettings() {
-  document.getElementById('settingsOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── SERVICE WORKER ─────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('SW enregistré'))
-      .catch(e => console.log('SW erreur:', e));
-  });
-}
-
-// ── MENU LATÉRAL ──────────────────────────────
-function openSideMenu() {
-  document.getElementById('sideMenu').classList.add('open');
-  document.getElementById('sideOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeSideMenu() {
-  document.getElementById('sideMenu').classList.remove('open');
-  document.getElementById('sideOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── NAVIGATION PAGES ──────────────────────────
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  // Mapping pour la compatibilité avec l'ancien système
-  const map = { 'main': 'page-main', 'coulisses': 'page-coulisses' };
-  const id = map[name] || name;
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
-  window.scrollTo(0, 0);
-  // Mettre à jour la nav mobile
-  document.querySelectorAll('.mobile-nav-bar a').forEach(a => a.classList.remove('active'));
-  const navMap = { 'page-main':'main', 'page-extraits':'extraits', 'page-shorts':'shorts' };
-  const navId = navMap[id];
-  if (navId) {
-    const navEl = document.getElementById('mnav-' + navId);
-    if (navEl) navEl.classList.add('active');
-  }
-}
-
-// ── MODAL ──────────────────────────────────────
-const DEFS = {
-  'Journaliste':    'Enquête, rédaction et présentation du sujet.',
-  'Vulgarisateur':  'Traduit les sujets complexes en langage accessible.',
-  'Monteur':        'Assemble et rythme les images pour la version finale.',
-  'Cadreur':        'Capture les images lors du tournage.',
-  'Réalisateur':    'Dirige artistiquement l\'ensemble de la vidéo.',
-  'Producteur':     'Organise et finance la production.',
-  'Ingénieur son':  'Capture et mixe le son sur le terrain et en post.',
-  'Graphiste':      'Crée les visuels, titres et animations.',
-  'Rédacteur':      'Rédige et vérifie le contenu éditorial.',
-  'Interviewer':    'Conduit et prépare les entretiens.',
-  'Téléprompteur':  'Gère le défilement du texte pour le présentateur en direct.',
-};
-
-function buildCreditsHTML(targetId, creditsStr, viewMode) {
-  const grid = document.getElementById(targetId);
-  if (!grid) return;
-  grid.innerHTML = '';
-  creditsStr.split('|').forEach(item => {
-    const parts = item.split(':');
-    if (parts.length < 2) return;
-    const role = parts[0].trim();
-    const name = parts.slice(1).join(':').trim();
-    const def = DEFS[role] || '';
-    if (viewMode) {
-      grid.innerHTML += `<div class="credits-view-row"><div class="credits-view-role">${role}</div><div class="credits-view-name">${name}</div>${def ? `<div class="credits-view-def">${def}</div>` : ''}</div>`;
-    } else {
-      grid.innerHTML += `<div class="credit-row"><div class="credit-role">${role}</div><div class="credit-name">${name}</div>${def ? `<div class="credit-def">${def}</div>` : ''}</div>`;
-    }
-  });
-}
-
-function openCreditsView() {
-  document.getElementById('modalPlayer').innerHTML = '';
-  document.getElementById('modal').classList.remove('open');
-  document.getElementById('modalCreditsView').classList.add('open');
-  window.scrollTo(0, 0);
-}
-
-function closeCreditsView() {
-  document.getElementById('modalCreditsView').classList.remove('open');
-  const view = document.getElementById('modalCreditsView');
-  const videoId = view.dataset.videoId;
-  const format = view.dataset.format;
-  const player = document.getElementById('modalPlayer');
-  const box = document.getElementById('modalBox');
-  player.className = format === 'portrait' ? 'modal-player portrait' : 'modal-player landscape';
-  box.className = format === 'portrait' ? 'modal-box vertical' : 'modal-box';
-  player.innerHTML = `<iframe src="https://app.videas.fr/embed/media/${videoId}/" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true" referrerpolicy="unsafe-url"></iframe>`;
-  document.getElementById('modal').classList.add('open');
-}
-
-function toggleCreditsPanel() {
-  const panel = document.getElementById('modalCreditsPanel');
-  const box = document.getElementById('modalBox');
-  const isOpen = panel.classList.contains('open');
-  panel.classList.toggle('open');
-  box.style.maxWidth = isOpen ? '' : '680px';
-}
-
-function openModal(videoId, theme, title, date, format, credits) {
-  document.getElementById('modalTheme').textContent = theme;
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalDate').textContent = date;
-  document.getElementById('modalCreditsPanel').classList.remove('open');
-  document.getElementById('modalBox').style.maxWidth = '';
-
-  const btn = document.getElementById('modalCreditsBtn');
-  const btnMobile = document.getElementById('modalCreditsBtnMobile');
-  const creditsView = document.getElementById('modalCreditsView');
-
-  if (credits && credits.trim() !== '') {
-    buildCreditsHTML('modalCreditsPanelGrid', credits, false);
-    buildCreditsHTML('creditsViewGrid', credits, true);
-    document.getElementById('creditsViewTheme').textContent = theme;
-    document.getElementById('creditsViewTitle').textContent = title;
-    creditsView.dataset.videoId = videoId;
-    creditsView.dataset.format = format;
-    btn.style.display = '';
-    btnMobile.style.display = 'block';
-  } else {
-    btn.style.display = 'none';
-    btnMobile.style.display = 'none';
-  }
-
-  const player = document.getElementById('modalPlayer');
-  const box = document.getElementById('modalBox');
-  player.className = format === 'portrait' ? 'modal-player portrait' : 'modal-player landscape';
-  box.className = format === 'portrait' ? 'modal-box vertical' : 'modal-box';
-  player.innerHTML = `<iframe src="https://app.videas.fr/embed/media/${videoId}/" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true" referrerpolicy="unsafe-url"></iframe>`;
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  document.getElementById('modalPlayer').innerHTML = '';
-  document.body.style.overflow = '';
-}
-
-// ── FILTRES EXTRAITS ───────────────────────────
-function filterTheme(el, theme) {
-  document.querySelectorAll('#s2 .tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  ['pol','soc','eco','int','cul','spt'].forEach(s => {
-    const sec = document.getElementById('ts-' + s);
-    if (sec) sec.style.display = (theme === 'tous' || theme === s) ? '' : 'none';
-  });
-}
-
-function filterTheme2(el, theme) {
-  document.querySelectorAll('#tabs2 .tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('#extraits-full-grid .ex-card').forEach(card => {
-    const t = card.dataset.theme;
-    card.style.display = (theme === 'tous' || theme === t) ? '' : 'none';
-  });
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeSettings(); }
-});
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
