@@ -90,6 +90,7 @@ function openVideo(id) {
   $("#modalDescription").textContent = v.description;
   $("#videoModal").classList.add("open");
   document.body.style.overflow = "hidden";
+  loadDisqus("video-" + v.id, "disqus_thread_video", window.location.origin + "/limpact/video/" + v.id);
 }
 
 function closeVideo() {
@@ -130,6 +131,7 @@ function openShort(id) {
   document.getElementById("shortDate").textContent     = s.date;
   document.getElementById("shortModal").classList.add("open");
   document.body.style.overflow = "hidden";
+  loadDisqus("short-" + s.id, "disqus_thread_short", window.location.origin + "/limpact/short/" + s.id);
 }
 
 function closeShort() {
@@ -273,3 +275,29 @@ function init() {
 
 // ── DÉMARRAGE ─────────────────────────────────
 document.addEventListener("DOMContentLoaded", loadVideos);
+
+// ── DISQUS ────────────────────────────────────
+function loadDisqus(threadId, containerId, pageUrl) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "";
+
+  window.disqus_config = function() {
+    this.page.url        = pageUrl || window.location.href;
+    this.page.identifier = threadId;
+  };
+
+  // Recharger Disqus si déjà chargé
+  if (window.DISQUS) {
+    window.DISQUS.reset({ reload: true, config: window.disqus_config });
+    const thread = document.getElementById("disqus_thread");
+    if (thread) container.appendChild(thread);
+    return;
+  }
+
+  // Premier chargement
+  const s = document.createElement("script");
+  s.src = "https://limpact.disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  container.appendChild(s);
+}
