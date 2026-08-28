@@ -316,20 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (sourcesSection) loadDrive();
 });
 
-// Charger le Drive quand la section est visible
-const driveObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      loadDrive();
-      driveObserver.disconnect();
-    }
-  });
-}, { threshold: 0.1 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const sourcesSection = document.getElementById("sources");
-  if (sourcesSection) driveObserver.observe(sourcesSection);
-});
 
 function fileIcon(mime) {
   if (mime === "application/vnd.google-apps.folder") return "📁";
@@ -437,18 +424,3 @@ async function loadDrive() {
     browser.innerHTML = '<div class="drive-error">Impossible de charger les fichiers. Vérifiez que le dossier Drive est public.</div>';
   }
 }
-
-// Charger le Drive quand la section est visible
-const driveObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      loadDrive();
-      driveObserver.disconnect();
-    }
-  });
-}, { threshold: 0.1 });
-
-document.addEventListener("DOMContentLoaded", () => {
-  const sourcesSection = document.getElementById("sources");
-  if (sourcesSection) driveObserver.observe(sourcesSection);
-});
