@@ -26,7 +26,6 @@
         <a href="#tech">Tech</a>
         <a href="#apropos">À propos</a>
         <a href="#sources">Sources</a>
-        <a href="#commentaires">Commentaires</a>
       </nav>
 
       <button class="search-button" id="openSearch" aria-label="Rechercher">⌕</button>
@@ -164,30 +163,6 @@
       </div>
     </section>
 
-    <section class="section comments-section" id="commentaires">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">COMMUNAUTÉ</span>
-          <h2>Commentaires</h2>
-        </div>
-      </div>
-      <script src="https://giscus.app/client.js"
-        data-repo="germainbordeaux/limpact"
-        data-repo-id="R_kgDOUGcmVg"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOUGcmVs4DEX9C"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="dark_dimmed"
-        data-lang="fr"
-        crossorigin="anonymous"
-        async>
-      </script>
-    </section>
-
   </main>
 
   <footer class="footer">
@@ -220,6 +195,9 @@
         <h2 id="modalTitle"></h2>
         <p id="modalDescription"></p>
       </div>
+      <div class="modal-comments">
+        <div id="disqus_thread_video"></div>
+      </div>
     </div>
   </div>
 
@@ -235,6 +213,9 @@
         <span class="category" id="shortCategory"></span>
         <h2 id="shortTitle"></h2>
         <p id="shortDate" style="color:#777; font-size:12px;"></p>
+      </div>
+      <div class="modal-comments">
+        <div id="disqus_thread_short"></div>
       </div>
     </div>
   </div>
