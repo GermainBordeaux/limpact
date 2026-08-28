@@ -280,24 +280,22 @@ document.addEventListener("DOMContentLoaded", loadVideos);
 function loadDisqus(threadId, containerId, pageUrl) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  container.innerHTML = "";
+
+  // Vider et recréer un div#disqus_thread dans le conteneur
+  container.innerHTML = '<div id="disqus_thread"></div>';
 
   window.disqus_config = function() {
     this.page.url        = pageUrl || window.location.href;
     this.page.identifier = threadId;
   };
 
-  // Recharger Disqus si déjà chargé
   if (window.DISQUS) {
     window.DISQUS.reset({ reload: true, config: window.disqus_config });
-    const thread = document.getElementById("disqus_thread");
-    if (thread) container.appendChild(thread);
     return;
   }
 
-  // Premier chargement
   const s = document.createElement("script");
   s.src = "https://limpact.disqus.com/embed.js";
   s.setAttribute("data-timestamp", +new Date());
-  container.appendChild(s);
+  document.body.appendChild(s);
 }
