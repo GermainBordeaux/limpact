@@ -231,3 +231,12 @@ button,input{font:inherit}
 @media(max-width:600px) {
   .drive-file { padding-left: 32px; }
 }
+
+/* ── COMMENTAIRES DANS MODALES ───────────────── */
+.modal-comments {
+  padding: 20px;
+  border-top: 1px solid #222;
+  background: #0d0d0d;
+  max-height: 400px;
+  overflow-y: auto;
+}
