@@ -231,18 +231,3 @@ button,input{font:inherit}
 @media(max-width:600px) {
   .drive-file { padding-left: 32px; }
 }
-
-/* ── DRIVE LINK BOX ──────────────────────────── */
-.drive-link-box {
-  display: flex; align-items: center; gap: 20px;
-  padding: 24px; background: var(--panel);
-  border: 1px solid var(--line);
-}
-.drive-link-icon { font-size: 40px; flex-shrink: 0; }
-.drive-link-text { flex: 1; }
-.drive-link-text strong { font-size: 16px; display: block; margin-bottom: 6px; }
-.drive-link-text p { color: var(--muted); font-size: 13px; margin: 0; }
-
-@media(max-width:600px) {
-  .drive-link-box { flex-direction: column; text-align: center; }
-}
