@@ -298,27 +298,22 @@ function loadDrive() {
   const browser = document.getElementById("driveBrowser");
   if (!browser) return;
   browser.innerHTML = `
-    <iframe
-      src="https://drive.google.com/embeddedfolderview?id=19zVl8f3BxJueVnXfVBRnoqrv6gTneYmQ#list"
-      style="width:100%; height:600px; border:1px solid #292929; background:#121212;"
-      allowfullscreen>
-    </iframe>
+    <div class="drive-link-box">
+      <div class="drive-link-icon">📁</div>
+      <div class="drive-link-text">
+        <strong>Archives L'Impact</strong>
+        <p>Rushs, scripts, documents de travail — tous les fichiers sources sont accessibles librement.</p>
+      </div>
+      <a class="btn btn-primary" href="https://drive.google.com/drive/folders/19zVl8f3BxJueVnXfVBRnoqrv6gTneYmQ" target="_blank" rel="noopener">
+        Ouvrir le Drive ↗
+      </a>
+    </div>
   `;
 }
 
-// Charger le Drive quand la section est visible
-const driveObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      loadDrive();
-      driveObserver.disconnect();
-    }
-  });
-}, { threshold: 0.1 });
-
 document.addEventListener("DOMContentLoaded", () => {
   const sourcesSection = document.getElementById("sources");
-  if (sourcesSection) driveObserver.observe(sourcesSection);
+  if (sourcesSection) loadDrive();
 });
 
 // Charger le Drive quand la section est visible
