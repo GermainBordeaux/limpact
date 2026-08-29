@@ -90,7 +90,10 @@ function openVideo(id) {
   $("#modalDescription").textContent = v.description;
   $("#videoModal").classList.add("open");
   document.body.style.overflow = "hidden";
-  loadDisqus("video-" + v.id, "disqus_thread_video", window.location.origin + "/limpact/video/" + v.id);
+  currentCommentId  = "video-" + v.id;
+  currentCommentUrl = window.location.origin + "/limpact/video/" + v.id;
+  // Fermer le panneau commentaires à chaque nouvelle vidéo
+  document.getElementById("videoCommentsSide").classList.remove("open");
 }
 
 function closeVideo() {
@@ -131,7 +134,10 @@ function openShort(id) {
   document.getElementById("shortDate").textContent     = s.date;
   document.getElementById("shortModal").classList.add("open");
   document.body.style.overflow = "hidden";
-  loadDisqus("short-" + s.id, "disqus_thread_short", window.location.origin + "/limpact/short/" + s.id);
+  currentCommentId  = "short-" + s.id;
+  currentCommentUrl = window.location.origin + "/limpact/short/" + s.id;
+  // Fermer le panneau commentaires à chaque nouveau short
+  document.getElementById("shortCommentsSide").classList.remove("open");
 }
 
 function closeShort() {
@@ -299,4 +305,39 @@ function loadDisqus(threadId, containerId, pageUrl) {
     s.setAttribute("data-timestamp", +new Date());
     document.body.appendChild(s);
   }, 300);
+}
+
+// ── TOGGLE COMMENTAIRES DESKTOP ───────────────
+let currentCommentId = "";
+let currentCommentUrl = "";
+
+function toggleVideoComments() {
+  const panel = document.getElementById("videoCommentsSide");
+  const isOpen = panel.classList.toggle("open");
+  if (isOpen) loadDisqus(currentCommentId, "disqus_thread_video", currentCommentUrl);
+}
+
+function toggleShortComments() {
+  const panel = document.getElementById("shortCommentsSide");
+  const isOpen = panel.classList.toggle("open");
+  if (isOpen) loadDisqus(currentCommentId, "disqus_thread_short", currentCommentUrl);
+}
+
+// ── COMMENTAIRES MOBILE PLEIN ÉCRAN ──────────
+function openCommentsFullscreen(type) {
+  // Stoppe la vidéo/short
+  if (type === "video") {
+    const player = document.querySelector("#videoModal iframe.main-player");
+    if (player) player.src = "";
+    document.getElementById("videoModal").classList.remove("open");
+  } else {
+    document.getElementById("shortIframe").src = "";
+    document.getElementById("shortModal").classList.remove("open");
+  }
+  loadDisqus(currentCommentId, "disqus_thread_mobile", currentCommentUrl);
+  document.getElementById("commentsFullscreen").classList.add("open");
+}
+
+function closeCommentsFullscreen() {
+  document.getElementById("commentsFullscreen").classList.remove("open");
 }
