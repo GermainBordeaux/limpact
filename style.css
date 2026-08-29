@@ -150,7 +150,7 @@ button,input{font:inherit}
 }
 
 /* Modal shorts (portrait) */
-.short-modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.short-modal { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
 .short-modal.open { display: flex; }
 .short-panel { background: #101010; border: 1px solid #333; position: relative; overflow: hidden; }
 .short-panel video { width: 100%; display: block; background: #000; max-height: 75vh; object-fit: contain; }
@@ -249,11 +249,12 @@ button,input{font:inherit}
   background: #111;
   margin: 0 auto;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
 }
 .video-panel, .short-panel {
   flex: 0 0 380px; min-width: 0; position: relative;
   display: flex; flex-direction: column;
+  overflow-y: auto;
 }
 .comments-toggle-btn {
   position: absolute; top: 10px; right: 50px; z-index: 10;
