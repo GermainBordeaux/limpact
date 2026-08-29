@@ -150,7 +150,7 @@ button,input{font:inherit}
 }
 
 /* Modal shorts (portrait) */
-.short-modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 100; display: none; align-items: center; justify-content: center; }
+.short-modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
 .short-modal.open { display: flex; }
 .short-panel { width: min(380px, 95vw); background: #101010; border: 1px solid #333; position: relative; overflow: hidden; }
 .short-panel video { width: 100%; display: block; background: #000; max-height: 75vh; object-fit: contain; }
@@ -243,8 +243,14 @@ button,input{font:inherit}
 
 /* ── COMMENTAIRES CÔTÉ VIDÉO ─────────────────── */
 .video-wrapper, .short-wrapper {
-  display: flex; align-items: flex-start;
-  max-width: 1200px; width: 100%;
+  display: flex; align-items: stretch;
+  max-width: 900px; width: 100%;
+  background: #111;
+  margin: 0 auto;
+  position: relative;
+}
+.video-panel, .short-panel {
+  flex: 1; min-width: 0; position: relative;
 }
 .comments-toggle-btn {
   position: absolute; top: 10px; right: 50px; z-index: 10;
@@ -258,9 +264,9 @@ button,input{font:inherit}
 .comments-side-panel {
   width: 0; overflow: hidden; background: #0d0d0d;
   border-left: 2px solid #222; transition: width .3s ease;
-  flex-shrink: 0; max-height: 80vh; overflow-y: auto;
+  flex-shrink: 0; overflow-y: auto;
 }
-.comments-side-panel.open { width: 320px; }
+.comments-side-panel.open { width: 300px; }
 .comments-side-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 14px 16px; border-bottom: 1px solid #222;
