@@ -92,8 +92,8 @@ function openVideo(id) {
   document.body.style.overflow = "hidden";
   currentCommentId  = "video-" + v.id;
   currentCommentUrl = window.location.origin + "/limpact/video/" + v.id;
-  // Fermer le panneau commentaires à chaque nouvelle vidéo
-  document.getElementById("videoCommentsSide").classList.remove("open");
+  const videoSide = document.getElementById("videoCommentsSide");
+  if (videoSide) videoSide.classList.remove("open");
 }
 
 function closeVideo() {
@@ -136,8 +136,8 @@ function openShort(id) {
   document.body.style.overflow = "hidden";
   currentCommentId  = "short-" + s.id;
   currentCommentUrl = window.location.origin + "/limpact/short/" + s.id;
-  // Fermer le panneau commentaires à chaque nouveau short
-  document.getElementById("shortCommentsSide").classList.remove("open");
+  const shortSide = document.getElementById("shortCommentsSide");
+  if (shortSide) shortSide.classList.remove("open");
 }
 
 function closeShort() {
