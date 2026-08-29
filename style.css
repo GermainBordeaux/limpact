@@ -91,7 +91,7 @@ button,input{font:inherit}
 .footer-links a:hover{color:var(--green)}
 .search-modal,.video-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
 .search-modal.open,.video-modal.open{display:flex}
-.search-panel,.video-panel{width:min(820px,100%);background:#101010;border:1px solid #333;position:relative;padding:35px}
+.search-panel{width:min(820px,100%);background:#101010;border:1px solid #333;position:relative;padding:35px}.video-panel{background:#101010;border:1px solid #333;position:relative;}
 .search-panel h2{font-size:40px;margin:8px 0 25px}
 .search-panel input{width:100%;background:#080808;color:#fff;border:1px solid #333;padding:16px;outline:none}
 .search-panel input:focus{border-color:var(--green)}
@@ -100,7 +100,7 @@ button,input{font:inherit}
 .result:hover{background:#181818}
 .result small{display:block;color:var(--green);text-transform:uppercase;font-size:10px}
 .close-modal{position:absolute;right:15px;top:10px;background:none;border:0;color:white;font-size:32px;cursor:pointer;z-index:2}
-.video-panel{padding:0;overflow:hidden}
+.video-panel{padding:0;overflow-y:auto;flex:1;display:flex;flex-direction:column;}
 .video-panel>video{width:100%;display:block;background:#000;max-height:70vh}
 .modal-info{padding:22px}
 .modal-info h2{margin:7px 0;font-size:27px}
@@ -152,7 +152,7 @@ button,input{font:inherit}
 /* Modal shorts (portrait) */
 .short-modal { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
 .short-modal.open { display: flex; }
-.short-panel { background: #101010; border: 1px solid #333; position: relative; overflow: hidden; }
+.short-panel { background: #101010; border: 1px solid #333; position: relative; overflow-y: auto; flex: 1; display: flex; flex-direction: column; }
 .short-panel video { width: 100%; display: block; background: #000; max-height: 75vh; object-fit: contain; }
 .short-panel .modal-info { padding: 16px; }
 .short-panel .modal-info h2 { font-size: 18px; margin: 6px 0; }
