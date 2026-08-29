@@ -278,24 +278,25 @@ document.addEventListener("DOMContentLoaded", loadVideos);
 
 // ── DISQUS ────────────────────────────────────
 function loadDisqus(threadId, containerId, pageUrl) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+  setTimeout(() => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-  // Vider et recréer un div#disqus_thread dans le conteneur
-  container.innerHTML = '<div id="disqus_thread"></div>';
+    container.innerHTML = '<div id="disqus_thread"></div>';
 
-  window.disqus_config = function() {
-    this.page.url        = pageUrl || window.location.href;
-    this.page.identifier = threadId;
-  };
+    window.disqus_config = function() {
+      this.page.url        = pageUrl || window.location.href;
+      this.page.identifier = threadId;
+    };
 
-  if (window.DISQUS) {
-    window.DISQUS.reset({ reload: true, config: window.disqus_config });
-    return;
-  }
+    if (window.DISQUS) {
+      window.DISQUS.reset({ reload: true, config: window.disqus_config });
+      return;
+    }
 
-  const s = document.createElement("script");
-  s.src = "https://limpact.disqus.com/embed.js";
-  s.setAttribute("data-timestamp", +new Date());
-  document.body.appendChild(s);
+    const s = document.createElement("script");
+    s.src = "https://limpact.disqus.com/embed.js";
+    s.setAttribute("data-timestamp", +new Date());
+    document.body.appendChild(s);
+  }, 300);
 }
