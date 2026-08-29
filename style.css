@@ -240,3 +240,70 @@ button,input{font:inherit}
   max-height: 400px;
   overflow-y: auto;
 }
+
+/* ── COMMENTAIRES CÔTÉ VIDÉO ─────────────────── */
+.video-wrapper, .short-wrapper {
+  display: flex; align-items: flex-start;
+  max-width: 1200px; width: 100%;
+}
+.comments-toggle-btn {
+  position: absolute; top: 10px; right: 50px; z-index: 10;
+  background: rgba(0,0,0,0.75); border: 1px solid #4cbe1a;
+  color: #4cbe1a; font-size: 11px; font-weight: 900;
+  letter-spacing: 1px; padding: 6px 12px; cursor: pointer;
+  transition: all .2s;
+}
+.comments-toggle-btn:hover { background: #4cbe1a; color: #000; }
+
+.comments-side-panel {
+  width: 0; overflow: hidden; background: #0d0d0d;
+  border-left: 2px solid #222; transition: width .3s ease;
+  flex-shrink: 0; max-height: 80vh; overflow-y: auto;
+}
+.comments-side-panel.open { width: 320px; }
+.comments-side-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; border-bottom: 1px solid #222;
+  font-size: 12px; font-weight: 900; color: #fff;
+  letter-spacing: 1px; text-transform: uppercase;
+  position: sticky; top: 0; background: #0d0d0d; z-index: 2;
+}
+.comments-side-header button {
+  background: none; border: none; color: #555;
+  font-size: 18px; cursor: pointer; line-height: 1;
+}
+.comments-side-header button:hover { color: #4cbe1a; }
+#disqus_thread_video, #disqus_thread_short { padding: 16px; }
+
+/* Mobile : bouton commentaires */
+.comments-mobile-btn {
+  display: none;
+  width: 100%; background: #0d0d0d; border: none;
+  border-top: 1px solid #222; color: #4cbe1a;
+  font-size: 11px; font-weight: 900; letter-spacing: 2px;
+  text-transform: uppercase; padding: 12px; cursor: pointer;
+}
+
+/* Plein écran commentaires mobile */
+.comments-fullscreen {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: #0a0a0a; overflow-y: auto; padding: 20px;
+}
+.comments-fullscreen.open { display: block; }
+.comments-fullscreen-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px; padding-bottom: 14px;
+  border-bottom: 2px solid #4cbe1a;
+  font-size: 14px; font-weight: 900; color: #fff;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+
+@media(max-width: 600px) {
+  .comments-toggle-btn { display: none !important; }
+  .comments-side-panel { display: none !important; }
+  .comments-mobile-btn { display: block; }
+}
+@media(min-width: 601px) {
+  .comments-mobile-btn { display: none !important; }
+  .comments-fullscreen { display: none !important; }
+}
