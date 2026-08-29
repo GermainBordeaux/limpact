@@ -187,37 +187,66 @@
   </div>
 
   <div class="video-modal" id="videoModal" aria-hidden="true">
-    <div class="video-panel">
-      <button class="close-modal" id="closeVideo" aria-label="Fermer">×</button>
-      <video id="modalVideo" controls playsinline></video>
-      <div class="modal-info">
-        <span class="category" id="modalCategory"></span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalDescription"></p>
+    <div class="video-wrapper">
+      <div class="video-panel">
+        <button class="close-modal" id="closeVideo" aria-label="Fermer">×</button>
+        <button class="comments-toggle-btn" id="videoCommentsBtn" onclick="toggleVideoComments()">💬 Commentaires</button>
+        <video id="modalVideo" controls playsinline></video>
+        <div class="modal-info">
+          <span class="category" id="modalCategory"></span>
+          <h2 id="modalTitle"></h2>
+          <p id="modalDescription"></p>
+        </div>
+        <!-- Mobile : bouton commentaires -->
+        <button class="comments-mobile-btn" id="videoCommentsMobileBtn" onclick="openCommentsFullscreen('video')">💬 Commentaires</button>
       </div>
-      <div class="modal-comments">
+      <!-- Desktop : panneau commentaires à droite -->
+      <div class="comments-side-panel" id="videoCommentsSide">
+        <div class="comments-side-header">
+          <span>💬 Commentaires</span>
+          <button onclick="toggleVideoComments()">✕</button>
+        </div>
         <div id="disqus_thread_video"></div>
       </div>
     </div>
   </div>
 
   <div class="short-modal" id="shortModal">
-    <div class="short-panel">
-      <button class="close-modal" id="closeShort" aria-label="Fermer">×</button>
-      <iframe id="shortIframe" frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen referrerpolicy="unsafe-url"
-        style="width:100%; aspect-ratio:9/16; display:block; background:#000; max-height:75vh;">
-      </iframe>
-      <div class="modal-info">
-        <span class="category" id="shortCategory"></span>
-        <h2 id="shortTitle"></h2>
-        <p id="shortDate" style="color:#777; font-size:12px;"></p>
+    <div class="short-wrapper">
+      <div class="short-panel">
+        <button class="close-modal" id="closeShort" aria-label="Fermer">×</button>
+        <button class="comments-toggle-btn" id="shortCommentsBtn" onclick="toggleShortComments()">💬 Commentaires</button>
+        <iframe id="shortIframe" frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen referrerpolicy="unsafe-url"
+          style="width:100%; aspect-ratio:9/16; display:block; background:#000; max-height:75vh;">
+        </iframe>
+        <div class="modal-info">
+          <span class="category" id="shortCategory"></span>
+          <h2 id="shortTitle"></h2>
+          <p id="shortDate" style="color:#777; font-size:12px;"></p>
+        </div>
+        <!-- Mobile : bouton commentaires -->
+        <button class="comments-mobile-btn" id="shortCommentsMobileBtn" onclick="openCommentsFullscreen('short')">💬 Commentaires</button>
       </div>
-      <div class="modal-comments">
+      <!-- Desktop : panneau commentaires à droite -->
+      <div class="comments-side-panel" id="shortCommentsSide">
+        <div class="comments-side-header">
+          <span>💬 Commentaires</span>
+          <button onclick="toggleShortComments()">✕</button>
+        </div>
         <div id="disqus_thread_short"></div>
       </div>
     </div>
+  </div>
+
+  <!-- VUE COMMENTAIRES MOBILE PLEIN ÉCRAN -->
+  <div class="comments-fullscreen" id="commentsFullscreen">
+    <div class="comments-fullscreen-header">
+      <button class="credits-back-btn" onclick="closeCommentsFullscreen()">←</button>
+      <span>💬 Commentaires</span>
+    </div>
+    <div id="disqus_thread_mobile"></div>
   </div>
 
   <script src="script.js"></script>
