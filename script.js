@@ -341,3 +341,84 @@ function openCommentsFullscreen(type) {
 function closeCommentsFullscreen() {
   document.getElementById("commentsFullscreen").classList.remove("open");
 }
+
+// ── CALENDRIER ────────────────────────────────
+async function loadCalendrier() {
+  const container = document.getElementById("calendrierContent");
+  if (!container) return;
+
+  try {
+    container.innerHTML = '<div class="cal-loading">Chargement du calendrier...</div>';
+    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Calendrier?key=${API_KEY}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    const rows = (data.values || []).slice(1);
+
+    const events = rows.map(row => ({
+      date:        row[0] || "",
+      heure:       row[1] || "",
+      titre:       row[2] || "",
+      description: row[3] || "",
+      type:        row[4] || "émission"
+    })).filter(e => e.date && e.titre)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (!events.length) {
+      container.innerHTML = '<div class="cal-empty">Aucune émission programmée pour le moment.</div>';
+      return;
+    }
+
+    const now = new Date();
+    const upcoming = events.filter(e => new Date(e.date) >= new Date(now.toDateString()));
+    const past     = events.filter(e => new Date(e.date) <  new Date(now.toDateString()));
+
+    let html = '';
+
+    if (upcoming.length) {
+      html += '<h3 class="cal-section-title">📅 À venir</h3>';
+      html += upcoming.map(e => calCard(e, false)).join('');
+    }
+
+    if (past.length) {
+      html += '<h3 class="cal-section-title cal-past-title">🕐 Passées</h3>';
+      html += past.map(e => calCard(e, true)).join('');
+    }
+
+    container.innerHTML = html;
+
+  } catch(err) {
+    console.error("Erreur calendrier:", err);
+    container.innerHTML = '<div class="cal-empty">Impossible de charger le calendrier.</div>';
+  }
+}
+
+function calCard(e, past) {
+  const date = new Date(e.date + 'T' + (e.heure || '00:00'));
+  const jour  = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const typeColors = {
+    'émission':  '#4cbe1a',
+    'retro':     '#e07a10',
+    'genant':    '#a020f0',
+    'coulisses': '#1a8aff',
+  };
+  const color = typeColors[e.type.toLowerCase()] || '#4cbe1a';
+
+  return `
+    <div class="cal-card ${past ? 'cal-card-past' : ''}">
+      <div class="cal-card-bar" style="background:${color}"></div>
+      <div class="cal-card-body">
+        <div class="cal-card-meta">
+          <span class="cal-card-date">${jour}</span>
+          ${e.heure ? `<span class="cal-card-heure">🕐 ${e.heure}</span>` : ''}
+          <span class="cal-card-type" style="color:${color}">${e.type}</span>
+        </div>
+        <div class="cal-card-titre">${e.titre}</div>
+        ${e.description ? `<div class="cal-card-desc">${e.description}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("calendrierContent")) loadCalendrier();
+});
