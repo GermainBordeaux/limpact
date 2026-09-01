@@ -446,3 +446,41 @@ button,input{font:inherit}
   .comments-mobile-btn { display: none !important; }
   .comments-fullscreen { display: none !important; }
 }
+
+/* ── CALENDRIER ──────────────────────────────── */
+.cal-loading, .cal-empty {
+  color: var(--muted); font-size: 14px; padding: 40px 0; text-align: center;
+}
+.cal-section-title {
+  font-size: 13px; font-weight: 900; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--green);
+  margin: 2rem 0 1rem; padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.cal-past-title { color: var(--muted); }
+.cal-card {
+  display: flex; gap: 0; margin-bottom: 12px;
+  background: var(--panel); border: 1px solid var(--line);
+  transition: .2s;
+}
+.cal-card:hover { border-color: var(--green); }
+.cal-card-past { opacity: 0.45; }
+.cal-card-bar { width: 4px; flex-shrink: 0; }
+.cal-card-body { padding: 16px 20px; flex: 1; }
+.cal-card-meta {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 8px; flex-wrap: wrap;
+}
+.cal-card-date { font-size: 12px; color: var(--muted); text-transform: capitalize; }
+.cal-card-heure { font-size: 12px; color: var(--muted); }
+.cal-card-type {
+  font-size: 10px; font-weight: 900; letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.cal-card-titre { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.cal-card-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+@media(max-width:600px) {
+  .cal-card-meta { gap: 8px; }
+  .cal-card-titre { font-size: 15px; }
+}
