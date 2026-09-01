@@ -168,7 +168,7 @@ async function loadCalendrier() {
   if (!container) return;
   try {
     container.innerHTML = '<div class="cal-loading">Chargement du calendrier...</div>';
-    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Calendrier?key=${API_KEY}`;
+    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet2?key=${API_KEY}`;
     const res  = await fetch(url);
     const data = await res.json();
     const rows = (data.values || []).slice(1);
