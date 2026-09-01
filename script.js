@@ -1,22 +1,25 @@
 /*
   L'IMPACT — script.js
-  Les vidéos sont chargées depuis Google Sheets.
-  Les sources pointent vers Google Drive.
+  Chargement depuis Google Sheets + toutes les fonctionnalités
 */
 
 // ── CONFIG ────────────────────────────────────
 const SHEET_ID   = "1wHAQhye3te3XCLoN5_c1YRecDuYk6ltjdvgb_rs-IPk";
 const API_KEY    = "AIzaSyA4_lJfNbkvFkuPIsko-CdqBukVsKaSXfg";
-const SHEET_NAME = "Sheet1";
 const DRIVE_URL  = "https://drive.google.com/drive/folders/19zVl8f3BxJueVnXfVBRnoqrv6gTneYmQ";
 
 let VIDEOS = [];
 let SHORTS = [];
+let currentCommentId  = "";
+let currentCommentUrl = "";
+
+// ── SÉLECTEUR ─────────────────────────────────
+const $ = s => document.querySelector(s);
 
 // ── CHARGEMENT SHEETS ─────────────────────────
 async function loadVideos() {
   try {
-    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
     const res  = await fetch(url);
     const data = await res.json();
     const rows = (data.values || []).slice(1);
@@ -41,12 +44,9 @@ async function loadVideos() {
   }
 }
 
-// ── SÉLECTEUR ─────────────────────────────────
-const $ = s => document.querySelector(s);
-
 // ── VIDÉOS ────────────────────────────────────
 function renderVideos(category) {
-  const grid  = $("#videoGrid");
+  const grid = $("#videoGrid");
   if (!grid) return;
   const items = !category || category === "Tous"
     ? VIDEOS
@@ -128,7 +128,7 @@ function renderShorts() {
 function openShort(id) {
   const s = SHORTS.find(x => x.id === id);
   if (!s) return;
-  document.getElementById("shortIframe").src      = s.videoUrl;
+  document.getElementById("shortIframe").src          = s.videoUrl;
   document.getElementById("shortCategory").textContent = s.categorie;
   document.getElementById("shortTitle").textContent    = s.titre;
   document.getElementById("shortDate").textContent     = s.date;
@@ -160,6 +160,124 @@ function loadDrive() {
       <a class="btn btn-primary" href="${DRIVE_URL}" target="_blank" rel="noopener">Ouvrir le Drive ↗</a>
     </div>
   `;
+}
+
+// ── CALENDRIER ────────────────────────────────
+async function loadCalendrier() {
+  const container = document.getElementById("calendrierContent");
+  if (!container) return;
+  try {
+    container.innerHTML = '<div class="cal-loading">Chargement du calendrier...</div>';
+    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Calendrier?key=${API_KEY}`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    const rows = (data.values || []).slice(1);
+
+    const events = rows.map(row => ({
+      date:        row[0] || "",
+      heure:       row[1] || "",
+      titre:       row[2] || "",
+      description: row[3] || "",
+      type:        row[4] || "émission"
+    })).filter(e => e.date && e.titre)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (!events.length) {
+      container.innerHTML = '<div class="cal-empty">Aucune émission programmée pour le moment.</div>';
+      return;
+    }
+
+    const now      = new Date();
+    const upcoming = events.filter(e => new Date(e.date) >= new Date(now.toDateString()));
+    const past     = events.filter(e => new Date(e.date) <  new Date(now.toDateString()));
+    let html = '';
+
+    if (upcoming.length) {
+      html += '<h3 class="cal-section-title">📅 À venir</h3>';
+      html += upcoming.map(e => calCard(e, false)).join('');
+    }
+    if (past.length) {
+      html += '<h3 class="cal-section-title cal-past-title">🕐 Passées</h3>';
+      html += past.map(e => calCard(e, true)).join('');
+    }
+    container.innerHTML = html;
+  } catch(err) {
+    console.error("Erreur calendrier:", err);
+    container.innerHTML = '<div class="cal-empty">Impossible de charger le calendrier.</div>';
+  }
+}
+
+function calCard(e, past) {
+  const date  = new Date(e.date + 'T' + (e.heure || '00:00'));
+  const jour  = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const colors = { 'émission':'#4cbe1a', 'retro':'#e07a10', 'genant':'#a020f0', 'coulisses':'#1a8aff' };
+  const color = colors[e.type.toLowerCase()] || '#4cbe1a';
+  return `
+    <div class="cal-card ${past ? 'cal-card-past' : ''}">
+      <div class="cal-card-bar" style="background:${color}"></div>
+      <div class="cal-card-body">
+        <div class="cal-card-meta">
+          <span class="cal-card-date">${jour}</span>
+          ${e.heure ? `<span class="cal-card-heure">🕐 ${e.heure}</span>` : ''}
+          <span class="cal-card-type" style="color:${color}">${e.type}</span>
+        </div>
+        <div class="cal-card-titre">${e.titre}</div>
+        ${e.description ? `<div class="cal-card-desc">${e.description}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ── DISQUS ────────────────────────────────────
+function loadDisqus(threadId, containerId, pageUrl) {
+  setTimeout(() => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '<div id="disqus_thread"></div>';
+    window.disqus_config = function() {
+      this.page.url        = pageUrl || window.location.href;
+      this.page.identifier = threadId;
+    };
+    if (window.DISQUS) {
+      window.DISQUS.reset({ reload: true, config: window.disqus_config });
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = "https://limpact.disqus.com/embed.js";
+    s.setAttribute("data-timestamp", +new Date());
+    document.body.appendChild(s);
+  }, 300);
+}
+
+// ── COMMENTAIRES DESKTOP ──────────────────────
+function toggleVideoComments() {
+  const panel = document.getElementById("videoCommentsSide");
+  const isOpen = panel.classList.toggle("open");
+  if (isOpen) loadDisqus(currentCommentId, "disqus_thread_video", currentCommentUrl);
+}
+
+function toggleShortComments() {
+  const panel = document.getElementById("shortCommentsSide");
+  const isOpen = panel.classList.toggle("open");
+  if (isOpen) loadDisqus(currentCommentId, "disqus_thread_short", currentCommentUrl);
+}
+
+// ── COMMENTAIRES MOBILE ───────────────────────
+function openCommentsFullscreen(type) {
+  if (type === "video") {
+    const player = document.querySelector("#videoModal iframe.main-player");
+    if (player) player.src = "";
+    document.getElementById("videoModal").classList.remove("open");
+  } else {
+    document.getElementById("shortIframe").src = "";
+    document.getElementById("shortModal").classList.remove("open");
+  }
+  loadDisqus(currentCommentId, "disqus_thread_mobile", currentCommentUrl);
+  document.getElementById("commentsFullscreen").classList.add("open");
+}
+
+function closeCommentsFullscreen() {
+  document.getElementById("commentsFullscreen").classList.remove("open");
 }
 
 // ── FILTRES ───────────────────────────────────
@@ -195,20 +313,18 @@ function renderHero() {
     wrap.innerHTML = "";
     wrap.appendChild(iframe);
   }
-  const title = $("#heroTitle");
-  const desc  = $("#heroDescription");
-  if (title) title.textContent = first.titre;
-  if (desc)  desc.textContent  = first.description;
+  if ($("#heroTitle"))       $("#heroTitle").textContent       = first.titre;
+  if ($("#heroDescription")) $("#heroDescription").textContent = first.description;
 }
 
 // ── RECHERCHE ─────────────────────────────────
 function initSearch() {
   function closeSearch() {
-    $("#searchModal").classList.remove("open");
+    $("#searchModal") && $("#searchModal").classList.remove("open");
   }
   $("#openSearch") && $("#openSearch").addEventListener("click", () => {
     $("#searchModal").classList.add("open");
-    setTimeout(() => $("#searchInput").focus(), 50);
+    setTimeout(() => $("#searchInput") && $("#searchInput").focus(), 50);
   });
   $("#closeSearch") && $("#closeSearch").addEventListener("click", closeSearch);
   $("#searchModal") && $("#searchModal").addEventListener("click", e => {
@@ -245,6 +361,7 @@ function init() {
   renderShorts();
   renderTicker();
   loadDrive();
+  loadCalendrier();
 
   document.querySelectorAll(".filter").forEach(btn => {
     btn.addEventListener("click", () => setCategory(btn.dataset.category));
@@ -273,7 +390,7 @@ function init() {
   });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { closeVideo(); closeShort(); }
+    if (e.key === "Escape") { closeVideo(); closeShort(); closeCommentsFullscreen(); }
   });
 
   initSearch();
@@ -281,144 +398,3 @@ function init() {
 
 // ── DÉMARRAGE ─────────────────────────────────
 document.addEventListener("DOMContentLoaded", loadVideos);
-
-// ── DISQUS ────────────────────────────────────
-function loadDisqus(threadId, containerId, pageUrl) {
-  setTimeout(() => {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    container.innerHTML = '<div id="disqus_thread"></div>';
-
-    window.disqus_config = function() {
-      this.page.url        = pageUrl || window.location.href;
-      this.page.identifier = threadId;
-    };
-
-    if (window.DISQUS) {
-      window.DISQUS.reset({ reload: true, config: window.disqus_config });
-      return;
-    }
-
-    const s = document.createElement("script");
-    s.src = "https://limpact.disqus.com/embed.js";
-    s.setAttribute("data-timestamp", +new Date());
-    document.body.appendChild(s);
-  }, 300);
-}
-
-// ── TOGGLE COMMENTAIRES DESKTOP ───────────────
-let currentCommentId = "";
-let currentCommentUrl = "";
-
-function toggleVideoComments() {
-  const panel = document.getElementById("videoCommentsSide");
-  const isOpen = panel.classList.toggle("open");
-  if (isOpen) loadDisqus(currentCommentId, "disqus_thread_video", currentCommentUrl);
-}
-
-function toggleShortComments() {
-  const panel = document.getElementById("shortCommentsSide");
-  const isOpen = panel.classList.toggle("open");
-  if (isOpen) loadDisqus(currentCommentId, "disqus_thread_short", currentCommentUrl);
-}
-
-// ── COMMENTAIRES MOBILE PLEIN ÉCRAN ──────────
-function openCommentsFullscreen(type) {
-  // Stoppe la vidéo/short
-  if (type === "video") {
-    const player = document.querySelector("#videoModal iframe.main-player");
-    if (player) player.src = "";
-    document.getElementById("videoModal").classList.remove("open");
-  } else {
-    document.getElementById("shortIframe").src = "";
-    document.getElementById("shortModal").classList.remove("open");
-  }
-  loadDisqus(currentCommentId, "disqus_thread_mobile", currentCommentUrl);
-  document.getElementById("commentsFullscreen").classList.add("open");
-}
-
-function closeCommentsFullscreen() {
-  document.getElementById("commentsFullscreen").classList.remove("open");
-}
-
-// ── CALENDRIER ────────────────────────────────
-async function loadCalendrier() {
-  const container = document.getElementById("calendrierContent");
-  if (!container) return;
-
-  try {
-    container.innerHTML = '<div class="cal-loading">Chargement du calendrier...</div>';
-    const url  = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Calendrier?key=${API_KEY}`;
-    const res  = await fetch(url);
-    const data = await res.json();
-    const rows = (data.values || []).slice(1);
-
-    const events = rows.map(row => ({
-      date:        row[0] || "",
-      heure:       row[1] || "",
-      titre:       row[2] || "",
-      description: row[3] || "",
-      type:        row[4] || "émission"
-    })).filter(e => e.date && e.titre)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    if (!events.length) {
-      container.innerHTML = '<div class="cal-empty">Aucune émission programmée pour le moment.</div>';
-      return;
-    }
-
-    const now = new Date();
-    const upcoming = events.filter(e => new Date(e.date) >= new Date(now.toDateString()));
-    const past     = events.filter(e => new Date(e.date) <  new Date(now.toDateString()));
-
-    let html = '';
-
-    if (upcoming.length) {
-      html += '<h3 class="cal-section-title">📅 À venir</h3>';
-      html += upcoming.map(e => calCard(e, false)).join('');
-    }
-
-    if (past.length) {
-      html += '<h3 class="cal-section-title cal-past-title">🕐 Passées</h3>';
-      html += past.map(e => calCard(e, true)).join('');
-    }
-
-    container.innerHTML = html;
-
-  } catch(err) {
-    console.error("Erreur calendrier:", err);
-    container.innerHTML = '<div class="cal-empty">Impossible de charger le calendrier.</div>';
-  }
-}
-
-function calCard(e, past) {
-  const date = new Date(e.date + 'T' + (e.heure || '00:00'));
-  const jour  = date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const typeColors = {
-    'émission':  '#4cbe1a',
-    'retro':     '#e07a10',
-    'genant':    '#a020f0',
-    'coulisses': '#1a8aff',
-  };
-  const color = typeColors[e.type.toLowerCase()] || '#4cbe1a';
-
-  return `
-    <div class="cal-card ${past ? 'cal-card-past' : ''}">
-      <div class="cal-card-bar" style="background:${color}"></div>
-      <div class="cal-card-body">
-        <div class="cal-card-meta">
-          <span class="cal-card-date">${jour}</span>
-          ${e.heure ? `<span class="cal-card-heure">🕐 ${e.heure}</span>` : ''}
-          <span class="cal-card-type" style="color:${color}">${e.type}</span>
-        </div>
-        <div class="cal-card-titre">${e.titre}</div>
-        ${e.description ? `<div class="cal-card-desc">${e.description}</div>` : ''}
-      </div>
-    </div>
-  `;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("calendrierContent")) loadCalendrier();
-});
